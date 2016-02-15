@@ -2,7 +2,7 @@
 Progtech. homework/beadandó
 
 ## Feladat:
----
+
 Készítsünk programot, amely egy internet kávézó nyilván
 tartását tudja kezelni, az alábbi 
 funkciókkal:  
