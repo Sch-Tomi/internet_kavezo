@@ -1,0 +1,25 @@
+
+ugyfel
+-----------------------------|
+Name	    |   Type         |
+-----------------------------|
+azonIndex   |	varchar(30)  |
+cim	        |   varchar(255) |
+szemszam	|   varchar(100) |
+nev	        |   varchar(255) |
+beido	    |   varchar(255) |
+egyenleg	|   int(11)      |
+status	    |   int(1)       |
+gepidIndex	|   int(11)      |
+pont	    |   int(11)      |
+-----------------------------|
+
+
+gepek
+------------------------|
+Name	    |   Type    |
+------------------------|
+idPrimary	|   int(11) |
+leiras	    |   text    |
+status	    |   int(1)  |
+------------------------|
