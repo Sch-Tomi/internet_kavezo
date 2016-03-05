@@ -1,12 +1,20 @@
-/**
+package IkMen.gui; /**
  * Created by tom on 2016.03.03..
  */
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.image.AreaAveragingScaleFilter;
+import java.util.ArrayList;
 
-public class gui extends JFrame{
+public class view extends JFrame{
 
     private JPanel mainPanel;
     private JPanel gepek;
@@ -15,6 +23,7 @@ public class gui extends JFrame{
 
     private JButton gepek_ujgep;
     private JButton gepek_modositas;
+    private JButton gepek_torles;
     private JTextArea gepek_leiras;
     private JLabel gepek_leiras_label;
     private JComboBox gepek_geplista;
@@ -48,18 +57,17 @@ public class gui extends JFrame{
 
 
 
-    public gui(){
-
-        initUI();
-
-    }
-
-    private void initUI(){
+    public view(Action buttonAct, ArrayList<Integer> buttonCmds, Action tabAct, Action comboAct){
 
         tabbedPane = new JTabbedPane();
 
         packGepek();
         packUgyfelek();
+
+        setActionListenersToButtons(buttonAct, buttonCmds);
+        setActionListenersToTabs(tabAct);
+        setGepekComboAction(comboAct);
+
 
         tabbedPane.addTab("Gépek", gepek);
         tabbedPane.addTab("Ügyfelek", ugyfelek);
@@ -77,6 +85,8 @@ public class gui extends JFrame{
     }
 
 
+
+
     public void packGepek(){
         gepek = new JPanel();
         gepek.setLayout(new BoxLayout(gepek, BoxLayout.Y_AXIS));
@@ -90,6 +100,9 @@ public class gui extends JFrame{
 
         gepek_modositas = new JButton();
         gepek_modositas.setText("Módosítás");
+
+        gepek_torles = new JButton();
+        gepek_torles.setText("Törlés");
 
         gepek_leiras = new JTextArea();
 
@@ -108,6 +121,7 @@ public class gui extends JFrame{
         gepek_labelPanel.add(gepek_leiras_label);
 
         gepek_modPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        gepek_modPanel.add(gepek_torles);
         gepek_modPanel.add(gepek_modositas);
 
         //feltöltés
@@ -115,8 +129,9 @@ public class gui extends JFrame{
         gepek.add(gepek_labelPanel);
         gepek.add(gepek_leiras);
         gepek.add(gepek_modPanel);
-    }
 
+
+    }
 
     public void packUgyfelek(){
 
@@ -233,5 +248,125 @@ public class gui extends JFrame{
         ugyfelek.add(ugyfelek_bal);
         ugyfelek.add(ugyfelek_jobb);
     }
+
+    public void setActionListenersToButtons(Action buttonAct, ArrayList<Integer> buttonCmds){
+
+        ArrayList<JButton> guiButtons = new ArrayList<JButton>(){{
+            add(gepek_ujgep);
+            add(gepek_modositas);
+            add(ugyfelek_ujUgyfel);
+            add(ugyfel_befizetes);
+            add(ugyfel_be);
+            add(ugyfel_ki);
+            add(gepek_torles);
+        }};
+
+
+        for(int i=0; i<buttonCmds.size(); i++){
+
+            setButtonAction(guiButtons.get(i), buttonAct, buttonCmds.get(i));
+
+        }
+
+    }
+
+    public void setButtonAction(JButton button, final Action act, final Integer cmdInt){
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                act.actionPerformed(new ActionEvent(e.getSource(), e.getID(), Integer.toString(cmdInt)));
+            }
+        });
+
+
+    }
+
+    public void setActionListenersToTabs(final Action tabAct){
+
+        tabbedPane.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (e.getSource() instanceof JTabbedPane) {
+                    JTabbedPane pane = (JTabbedPane) e.getSource();
+                    tabAct.actionPerformed(new ActionEvent(e.getSource(), 1, Integer.toString(pane.getSelectedIndex())));
+                }
+            }
+        });
+
+
+    }
+
+    public void updateGepList(ArrayList<String> list){
+
+        gepek_geplista.removeAllItems();
+
+        for (String aList : list) {
+
+            gepek_geplista.addItem(aList);
+        }
+
+    }
+
+    public void setGepekComboAction(final Action act){
+
+        gepek_geplista.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent arg0) {
+                act.actionPerformed( new ActionEvent(arg0.getSource(), arg0.getID(), String.valueOf(gepek_geplista.getSelectedItem())) );
+            }
+        });
+
+    }
+
+    public void updateLeiras(ArrayList<String> data){
+        if(data.size() == 3) {
+            String azon = data.get(0);
+            String leiras = data.get(1);
+            int status = Integer.parseInt(data.get(2));
+
+            gepek_leiras.setText(leiras);
+
+            if (status == 0) {
+                gepek_leiras_label.setText("Gép Leírás: (A gép Szabad)");
+            }
+
+            if (status == 1) {
+                gepek_leiras_label.setText("Gép Leírás: (A gép Foglalt)");
+            }
+        }
+    }
+
+    public String getCurrentItem(){
+        return String.valueOf(gepek_geplista.getSelectedItem());
+    }
+
+    public String getLeiras(){
+        return gepek_leiras.getText();
+    }
+
+    public ArrayList<String> makeNewMachine(){
+
+        JTextField azon = new JTextField();
+        JTextArea leiras = new JTextArea(20,50);
+        JPanel inside = new JPanel();
+        inside.setLayout(new BoxLayout(inside, BoxLayout.Y_AXIS));
+        inside.add(new JLabel("Azonosító"));
+        inside.add(azon);
+        inside.add(new JLabel("Gép leírása"));
+        inside.add(leiras);
+        inside.setSize(new Dimension(300,200));
+
+
+        JOptionPane.showMessageDialog(null, inside, "Új gép felvétele", JOptionPane.PLAIN_MESSAGE);
+
+        ArrayList<String> retarr =  new ArrayList<String>();
+        retarr.add(azon.getText());
+        retarr.add(leiras.getText());
+
+        return retarr;
+
+    }
+
 
 }

@@ -1,52 +1,63 @@
-package mysql; /**
+package IkMen.mysql; /**
  * Created by tom on 2016.03.03..
  */
 
 import java.sql.*;
 import java.util.ArrayList;
-import mysql.helpers.ugyfelArray;
+import IkMen.mysql.helpers.ugyfelArray;
 
-public class db {
+public class model {
 
     // JDBC driver name and database URL
-    private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://db4free.net/";
+    private static final String DB_URL = "jdbc:mysql://192.168.1.100:3306/ikmen";
 
     //  Database credentials
-    private static final String USER = "cool";
-    private static final String PASS = "asdqwe123";
+    private static final String USER = "test";
+    private static final String PASS = "qwe";
 
     private Connection conn;
     private Statement stmt;
 
-    public db() {
+    public model() {
         conn = null;
         stmt = null;
 
+        System.out.println("-------- MySQL JDBC Connection Testing ------------");
 
         try {
-            //STEP 2: Register JDBC driver
             Class.forName("com.mysql.jdbc.Driver");
-
-            //STEP 3: Open a connection
-            System.out.println("Connecting to database...");
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            System.out.println("Connected database successfully...");
-        }catch(SQLException se){
-            //Handle errors for JDBC
-            se.printStackTrace();
-        }catch(Exception e){
-            //Handle errors for Class.forName
+        } catch (ClassNotFoundException e) {
+            System.out.println("Where is your MySQL JDBC Driver?");
             e.printStackTrace();
+            return;
         }
+
+        System.out.println("MySQL JDBC Driver Registered!");
+
+        try {
+            conn = DriverManager
+                    .getConnection(DB_URL, USER, PASS);
+
+        } catch (SQLException e) {
+            System.out.println("Connection Failed! Check output console");
+            e.printStackTrace();
+            return;
+        }
+
+        if (conn != null) {
+            System.out.println("You made it, take control your database now!");
+        } else {
+            System.out.println("Failed to make connection!");
+        }
+
 
     }
 
     // GÉPEK --->
 
-    public ArrayList<Integer> getGepekID(){
+    public ArrayList<String> getGepekIDs(){
 
-        ArrayList<Integer> retArr = new ArrayList<Integer>();
+        ArrayList<String> retArr = new ArrayList<String>();
 
         try {
             stmt = conn.createStatement();
@@ -55,7 +66,7 @@ public class db {
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()){
-                retArr.add(rs.getInt("id"));
+                retArr.add(rs.getString("id"));
             }
 
 
@@ -68,10 +79,37 @@ public class db {
         return retArr;
     }
 
-    public void creatNewGep(int id, String text){
+    public ArrayList<String> getGep(String azon){
+
+        ArrayList<String> retArr = new ArrayList<String>();
 
         try {
-            String sql = "INSERT INTO gepek VALUES ("+Integer.toString(id)+", "+text+", 0)";
+            stmt = conn.createStatement();
+            String sql;
+            sql = "SELECT * FROM gepek WHERE id = '"+azon+"'";
+            ResultSet rs = stmt.executeQuery(sql);
+
+            if (rs.first()) {
+                retArr.add(rs.getString("id"));
+                retArr.add(rs.getString("leiras"));
+                retArr.add(Integer.toString(rs.getInt("status")));
+            }
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }
+
+
+        return retArr;
+
+
+    }
+
+    public void creatNewGep(String id, String text){
+
+        try {
+            String sql = "INSERT INTO gepek VALUES ('"+id+"', '"+text+"', 0)";
             stmt.executeUpdate(sql);
 
         }catch(SQLException se){
@@ -82,12 +120,10 @@ public class db {
 
     }
 
-    public void setGepLeiras(int id, String text){
+    public void deleteGep(String azon){
 
         try {
-            stmt = conn.createStatement();
-            String sql;
-            sql = "UPDATE gepek SET leiras = "+ text +" WHERE id = "+Integer.toString(id);
+            String sql = "DELETE FROM gepek WHERE id = '"+azon+"'";
             stmt.executeUpdate(sql);
 
         }catch(SQLException se){
@@ -97,12 +133,12 @@ public class db {
 
     }
 
-    public void setGepAvaliable(int id){
+    public void setGepLeiras(String id, String text){
 
         try {
             stmt = conn.createStatement();
             String sql;
-            sql = "UPDATE gepek SET status = 0 WHERE id = "+Integer.toString(id);
+            sql = "UPDATE gepek SET leiras = '"+ text +"' WHERE id = '"+id+"'";
             stmt.executeUpdate(sql);
 
         }catch(SQLException se){
@@ -112,12 +148,27 @@ public class db {
 
     }
 
-    public void setGepUnAvaliable(int id){
+    public void setGepAvaliable(String id){
 
         try {
             stmt = conn.createStatement();
             String sql;
-            sql = "UPDATE gepek SET status = 1 WHERE id = "+Integer.toString(id);
+            sql = "UPDATE gepek SET status = 0 WHERE id = '"+id+"'";
+            stmt.executeUpdate(sql);
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }
+
+    }
+
+    public void setGepUnAvaliable(String id){
+
+        try {
+            stmt = conn.createStatement();
+            String sql;
+            sql = "UPDATE gepek SET status = 1 WHERE id = '"+id+"'";
             stmt.executeUpdate(sql);
 
         }catch(SQLException se){

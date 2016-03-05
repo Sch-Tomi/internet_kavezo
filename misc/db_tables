@@ -3,14 +3,14 @@ ugyfel
 -----------------------------|
 Name	    |   Type         |
 -----------------------------|
-azonIndex   |	varchar(30)  |
+azon        |	varchar(30)  |
 cim	        |   varchar(255) |
 szemszam	|   varchar(100) |
 nev	        |   varchar(255) |
 beido	    |   varchar(255) |
 egyenleg	|   int(11)      |
 status	    |   int(1)       |
-gepidIndex	|   int(11)      |
+gepid   	|   int(11)      |
 pont	    |   int(11)      |
 -----------------------------|
 
@@ -19,7 +19,89 @@ gepek
 ------------------------|
 Name	    |   Type    |
 ------------------------|
-idPrimary	|   int(11) |
+id	        |   int(11) |
 leiras	    |   text    |
 status	    |   int(1)  |
 ------------------------|
+
+-- phpMyAdmin SQL Dump
+-- version 4.5.5.1
+-- http://www.phpmyadmin.net
+--
+-- Host: 127.0.0.1:3306
+-- Generation Time: Mar 04, 2016 at 01:11 PM
+-- Server version: 5.7.11
+-- PHP Version: 5.5.9-1ubuntu4.14
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+--
+-- Database: `ikmen`
+--
+CREATE DATABASE IF NOT EXISTS `ikmen` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `ikmen`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `gepek`
+--
+
+CREATE TABLE `gepek` (
+  `id` varchar(100) COLLATE utf8_hungarian_ci NOT NULL,
+  `leiras` text COLLATE utf8_hungarian_ci NOT NULL,
+  `status` int(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+
+--
+-- Dumping data for table `gepek`
+--
+
+INSERT INTO `gepek` (`id`, `leiras`, `status`) VALUES
+('001', 'AMD HD RADEON....', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ugyfelek`
+--
+
+CREATE TABLE `ugyfelek` (
+  `azon` varchar(30) COLLATE utf8_hungarian_ci NOT NULL,
+  `cim` varchar(255) COLLATE utf8_hungarian_ci NOT NULL,
+  `szemszam` varchar(100) COLLATE utf8_hungarian_ci NOT NULL,
+  `nev` varchar(255) COLLATE utf8_hungarian_ci NOT NULL,
+  `beido` varchar(255) COLLATE utf8_hungarian_ci NOT NULL,
+  `egyenleg` int(11) NOT NULL,
+  `status` int(1) NOT NULL,
+  `gepid` varchar(100) COLLATE utf8_hungarian_ci NOT NULL,
+  `pont` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `gepek`
+--
+ALTER TABLE `gepek`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `ugyfelek`
+--
+ALTER TABLE `ugyfelek`
+  ADD UNIQUE KEY `unique` (`azon`),
+  ADD KEY `gepid` (`gepid`);
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `ugyfelek`
+--
+ALTER TABLE `ugyfelek`
+  ADD CONSTRAINT `ugyfelek_ibfk_1` FOREIGN KEY (`gepid`) REFERENCES `gepek` (`id`);

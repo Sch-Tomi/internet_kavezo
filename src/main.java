@@ -1,3 +1,5 @@
+import IkMen.controll;
+
 import javax.swing.*;
 
 /**
@@ -9,10 +11,24 @@ public class main {
 
 
     public static void main(String[] args){
+        try {
+            // Set System L&F
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        }
+        catch (UnsupportedLookAndFeelException e) {
+            // handle exception
+        }
+        catch (ClassNotFoundException e) {
+            // handle exception
+        }
+        catch (InstantiationException e) {
+            // handle exception
+        }
+        catch (IllegalAccessException e) {
+            // handle exception
+        }
 
-        JFrame window = new gui();
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setVisible(true);
+        controll wind = new controll();
 
     }
 

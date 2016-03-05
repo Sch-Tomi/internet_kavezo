@@ -1,4 +1,4 @@
-package mysql.helpers;
+package IkMen.mysql.helpers;
 
 /**
  * Created by tom on 2016.03.03..
