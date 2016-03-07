@@ -2,9 +2,13 @@ package IkMen.gui; /**
  * Created by tom on 2016.03.03..
  */
 
+import IkMen.mysql.helpers.ugyfelArray;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -57,7 +61,7 @@ public class view extends JFrame{
 
 
 
-    public view(Action buttonAct, ArrayList<Integer> buttonCmds, Action tabAct, Action comboAct){
+    public view(Action buttonAct, ArrayList<Integer> buttonCmds, Action tabAct, Action comboAct, Action ugyfelekListaAct){
 
         tabbedPane = new JTabbedPane();
 
@@ -67,7 +71,7 @@ public class view extends JFrame{
         setActionListenersToButtons(buttonAct, buttonCmds);
         setActionListenersToTabs(tabAct);
         setGepekComboAction(comboAct);
-
+        setUgyfelekListChangeListener(ugyfelekListaAct);
 
         tabbedPane.addTab("Gépek", gepek);
         tabbedPane.addTab("Ügyfelek", ugyfelek);
@@ -312,6 +316,7 @@ public class view extends JFrame{
     public void setGepekComboAction(final Action act){
 
         gepek_geplista.addItemListener(new ItemListener() {
+
             public void itemStateChanged(ItemEvent arg0) {
                 act.actionPerformed( new ActionEvent(arg0.getSource(), arg0.getID(), String.valueOf(gepek_geplista.getSelectedItem())) );
             }
@@ -337,7 +342,7 @@ public class view extends JFrame{
         }
     }
 
-    public String getCurrentItem(){
+    public String getCurrentGepItem(){
         return String.valueOf(gepek_geplista.getSelectedItem());
     }
 
@@ -368,5 +373,45 @@ public class view extends JFrame{
 
     }
 
+
+    // Ugyfelek
+
+    public void updateUgyfelList(ArrayList<String> list){
+
+        ugyfelek_lista.removeAll();
+
+        for (String ListItem : list) {
+            ugyfelek.add(ListItem);
+        }
+
+
+    }
+
+    public void setUgyfelekListChangeListener(Action act){
+
+        ugyfelek_lista.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                act.actionPerformed(new ActionEvent(e.getSource(), 1, ugyfelekGetCurrent()));
+            }
+        });
+
+
+    }
+
+    public String ugyfelekGetCurrent(){
+
+        return ugyfelek_lista.getSelectedValue().toString();
+
+    }
+
+    public void updateUgyfelDatas(ugyfelArray data){
+
+        ugyfel_nev.setText(data.nev);
+        ugyfel_cim.setText(data.cim);
+        ugyfel_szemszam.setText(data.szemSzam);
+        ugyfel_egyenleg.setText(Integer.toString(data.egyenleg));
+
+    }
 
 }

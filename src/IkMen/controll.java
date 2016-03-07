@@ -57,7 +57,7 @@ public class controll {
                     updateGui();
                     break;
                 case 2: // "gepek_modositas":
-                    db.setGepLeiras(gui.getCurrentItem(), gui.getLeiras());
+                    db.setGepLeiras(gui.getCurrentGepItem(), gui.getLeiras());
                     System.out.println("Leírás frissült!");
                     break;
                 case 3: //"ugyfelek_ujUgyfel":
@@ -73,7 +73,7 @@ public class controll {
 
                     break;
                 case 7:
-                    db.deleteGep(gui.getCurrentItem());
+                    db.deleteGep(gui.getCurrentGepItem());
                     System.out.println("Gép Törölve");
                     updateGui();
                     break;
@@ -84,6 +84,13 @@ public class controll {
 
         }
     };
+
+    public Action ugyfelekListaAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            gui.updateUgyfelDatas(db.getUgyfel(e.getActionCommand()));
+        }
+    }
 
     public controll(){
 
@@ -113,6 +120,7 @@ public class controll {
     private void updateGui(){
 
         gui.updateGepList(db.getGepekIDs());
+        gui.updateUgyfelList(db.getUgyfelekList());
 
     }
 
