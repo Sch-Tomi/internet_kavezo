@@ -15,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 
 public class view extends JFrame{
@@ -42,6 +41,8 @@ public class view extends JFrame{
 
     private JLabel ugyfelek_ugyfelek_label;
     private JList ugyfelek_lista;
+    private JScrollPane ugyfelek_listScroller;
+    private DefaultListModel ugyfelek_listModel;
     private JButton ugyfelek_ujUgyfel;
 
     private JLabel ugyfel_ugyfel_label;
@@ -150,7 +151,20 @@ public class view extends JFrame{
         ugyfelek_jobb_lab = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         ugyfelek_ugyfelek_label = new JLabel("Ügyfelek");
-        ugyfelek_lista = new JList();
+
+        ugyfelek_listModel = new DefaultListModel();
+        ugyfelek_listModel.addElement("123");
+        ugyfelek_listModel.addElement("1265");
+        ugyfelek_listModel.addElement("221");
+
+        ugyfelek_lista = new JList(ugyfelek_listModel);
+        ugyfelek_lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ugyfelek_lista.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        ugyfelek_lista.setVisibleRowCount(-1);
+
+        ugyfelek_listScroller = new JScrollPane(ugyfelek_lista);
+        ugyfelek_listScroller.setPreferredSize(new Dimension(250, 80));
+
         ugyfelek_ujUgyfel = new JButton("Új ügyfél");
 
         ugyfel_ugyfel_label = new JLabel("Ügyfél");
@@ -378,12 +392,13 @@ public class view extends JFrame{
 
     public void updateUgyfelList(ArrayList<String> list){
 
-        ugyfelek_lista.removeAll();
+        ugyfelek_listModel.removeAllElements();
 
         for (String ListItem : list) {
-            ugyfelek.add(ListItem);
+            ugyfelek_listModel.addElement(ListItem);
         }
 
+        ugyfelek_lista.updateUI();
 
     }
 
@@ -413,5 +428,45 @@ public class view extends JFrame{
         ugyfel_egyenleg.setText(Integer.toString(data.egyenleg));
 
     }
+
+    public int befizetes(){
+
+
+        // Kérdés ablak...
+        JTextField osszeg = new JTextField();
+        JPanel inside = new JPanel();
+        inside.setLayout(new BoxLayout(inside, BoxLayout.Y_AXIS));
+        inside.add(new JLabel("Befizetni kívánt összeg:"));
+        inside.add(osszeg);
+        inside.setSize(new Dimension(300,200));
+
+
+        JOptionPane.showMessageDialog(null, inside, "Új befizetés", JOptionPane.PLAIN_MESSAGE);
+
+
+        // megerősítés
+        Object[] options = {"Igen",
+                            "Nem"};
+        int n = JOptionPane.showOptionDialog(null,
+        new StringBuilder("Biztos ezt az összeget akarja hozzáadni, a ").append("NEVE").append(" nevű felhasználó számlájához?").append("\nÖsszeg: ").append(osszeg.getText()).toString(),
+        "Befizetés megerősítése",
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE,
+        null,
+        options,
+        options[0]);
+
+
+        // válasz alapján:
+        int ret = 0;
+
+        if(n == 0){
+             ret = Integer.parseInt(osszeg.getText());
+        }
+
+        return ret;
+    }
+
+
 
 }

@@ -64,7 +64,7 @@ public class controll {
 
                     break;
                 case 4: // "ugyfel_befizetes":
-
+                    db.setEgyenleg(gui.ugyfelekGetCurrent(), gui.befizetes());
                     break;
                 case 5: // "ugyfel_be":
 
@@ -90,7 +90,7 @@ public class controll {
         public void actionPerformed(ActionEvent e) {
             gui.updateUgyfelDatas(db.getUgyfel(e.getActionCommand()));
         }
-    }
+    };
 
     public controll(){
 
@@ -107,7 +107,7 @@ public class controll {
         }};
 
 
-        gui = new view(controllAction, guiButtons, tabAction, comboAction);
+        gui = new view(controllAction, guiButtons, tabAction, comboAction, ugyfelekListaAction);
         gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gui.setVisible(true);
 
