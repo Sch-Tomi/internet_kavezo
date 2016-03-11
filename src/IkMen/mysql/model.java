@@ -9,7 +9,7 @@ import IkMen.mysql.helpers.ugyfelArray;
 public class model {
 
     // JDBC driver name and database URL
-    private static final String DB_URL = "jdbc:mysql://192.168.1.100:3306/ikmen";
+    private static final String DB_URL = "jdbc:mysql://192.168.1.102:3306/ikmen";
 
     //  Database credentials
     private static final String USER = "test";
@@ -216,14 +216,14 @@ public class model {
 
         int status;
         int egyenleg;
-        int gepid;
+        String gepid;
         int pont;
 
 
         try {
             stmt = conn.createStatement();
             String sql;
-            sql = "SELECT * FROM ugyfelek WHERE azon = "+KerAzon;
+            sql = "SELECT * FROM ugyfelek WHERE azon = '"+KerAzon+"'";
             ResultSet rs = stmt.executeQuery(sql);
             rs.first();
 
@@ -235,7 +235,7 @@ public class model {
 
             status = rs.getInt("status");
             egyenleg = rs.getInt("egyenleg");
-            gepid = rs.getInt("gepid");
+            gepid = rs.getString("gepid");
             pont = rs.getInt("pont");
 
             return new ugyfelArray(nev, azon, cim,szemSzam, beido, status, egyenleg, gepid, pont);
@@ -258,6 +258,31 @@ public class model {
                     " cim = "+ugyfel.cim +
                     " szemSzam = "+ugyfel.szemSzam+
                     " WHERE id = "+ugyfel.azon;
+            stmt.executeUpdate(sql);
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }
+
+    }
+
+    public void createUgyfel(ugyfelArray ugyfel){
+
+        try {
+            stmt = conn.createStatement();
+            String sql;
+            sql = "INSERT INTO ugyfelek VALUES (" +
+                    "'"+ ugyfel.azon +"', "+
+                    "'"+ ugyfel.cim +"', "+
+                    "'"+ ugyfel.szemSzam+"', "+
+                    "'"+ ugyfel.nev +"', "+
+                    "'"+ ugyfel.beido +"', "+
+                    "'"+ ugyfel.egyenleg +"', "+
+                    "'"+ ugyfel.status +"', "+
+                    "'"+ ugyfel.gepid +"', "+
+                    "'"+ ugyfel.pont+"')";
+
             stmt.executeUpdate(sql);
 
         }catch(SQLException se){

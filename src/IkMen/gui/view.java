@@ -36,8 +36,11 @@ public class view extends JFrame{
 
     private JPanel ugyfelek_bal;
     private JPanel ugyfelek_jobb;
+    private JPanel ugyfelek_jobb_table;
     private JPanel ugyfelek_bal_lab;
     private JPanel ugyfelek_jobb_lab;
+    private JPanel ugyfelek_jobb_end;
+
 
     private JLabel ugyfelek_ugyfelek_label;
     private JList ugyfelek_lista;
@@ -144,26 +147,26 @@ public class view extends JFrame{
         ugyfelek.setLayout(new BoxLayout(ugyfelek, BoxLayout.X_AXIS));
 
         ugyfelek_bal = new JPanel();
-        ugyfelek_bal.setLayout(new BoxLayout(ugyfelek_bal, BoxLayout.Y_AXIS));
+        ugyfelek_bal.setLayout(new BorderLayout());
         ugyfelek_jobb = new JPanel();
+        ugyfelek_jobb.setLayout(new BorderLayout());
+        ugyfelek_jobb_table = new JPanel();
+        ugyfelek_jobb_table.setLayout(new BoxLayout(ugyfelek_bal, BoxLayout.Y_AXIS) );
 
         ugyfelek_bal_lab = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        ugyfelek_jobb_lab = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ugyfelek_jobb_lab = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         ugyfelek_ugyfelek_label = new JLabel("Ügyfelek");
 
         ugyfelek_listModel = new DefaultListModel();
-        ugyfelek_listModel.addElement("123");
-        ugyfelek_listModel.addElement("1265");
-        ugyfelek_listModel.addElement("221");
 
         ugyfelek_lista = new JList(ugyfelek_listModel);
         ugyfelek_lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        ugyfelek_lista.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        ugyfelek_lista.setLayoutOrientation(JList.VERTICAL);
         ugyfelek_lista.setVisibleRowCount(-1);
 
         ugyfelek_listScroller = new JScrollPane(ugyfelek_lista);
-        ugyfelek_listScroller.setPreferredSize(new Dimension(250, 80));
+        ugyfelek_listScroller.setSize(new Dimension(250, 80));
 
         ugyfelek_ujUgyfel = new JButton("Új ügyfél");
 
@@ -185,85 +188,82 @@ public class view extends JFrame{
 
         // Baloldal
         ugyfelek_bal_lab.add(ugyfelek_ugyfelek_label);
-        ugyfelek_bal.add(ugyfelek_bal_lab);
-        ugyfelek_bal.add(ugyfelek_lista);
-        ugyfelek_bal.add(ugyfelek_ujUgyfel);
+        ugyfelek_bal.add(ugyfelek_bal_lab, BorderLayout.PAGE_START);
+        ugyfelek_bal.add(ugyfelek_lista, BorderLayout.CENTER);
+        ugyfelek_bal.add(ugyfelek_ujUgyfel, BorderLayout.PAGE_END);
 
         // Jobboldal
         GridBagLayout layout = new GridBagLayout();
-        ugyfelek_jobb.setLayout(layout);
+        ugyfelek_jobb_table.setLayout(layout);
         GridBagConstraints gbc = new GridBagConstraints();
 
-        ugyfelek_jobb_lab.add(ugyfel_ugyfel_label);
-
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.ipadx = 30;
-        ugyfelek_jobb.add(ugyfelek_jobb_lab, gbc);
-
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 1;
-        ugyfelek_jobb.add(ugyfel_nev_lab, gbc);
+        gbc.ipadx = 2;
+        ugyfelek_jobb_table.add(ugyfel_nev_lab, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 1;
-        ugyfelek_jobb.add(ugyfel_nev, gbc);
+        gbc.weightx = 1.0;
+        gbc.gridwidth = 1;
+        ugyfelek_jobb_table.add(ugyfel_nev, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 2;
-        ugyfelek_jobb.add(ugyfel_cim_lab, gbc);
+        ugyfelek_jobb_table.add(ugyfel_cim_lab, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 2;
-        ugyfelek_jobb.add(ugyfel_cim, gbc);
+        ugyfelek_jobb_table.add(ugyfel_cim, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 3;
-        ugyfelek_jobb.add(ugyfel_szemszam_lab, gbc);
+        ugyfelek_jobb_table.add(ugyfel_szemszam_lab, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 3;
-        ugyfelek_jobb.add(ugyfel_szemszam, gbc);
+        ugyfelek_jobb_table.add(ugyfel_szemszam, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 4;
-        ugyfelek_jobb.add(ugyfel_azon_lab, gbc);
+        ugyfelek_jobb_table.add(ugyfel_azon_lab, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 4;
-        ugyfelek_jobb.add(ugyfel_azon, gbc);
+        ugyfelek_jobb_table.add(ugyfel_azon, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 5;
-        ugyfelek_jobb.add(ugyfel_egyenleg_lab, gbc);
+        ugyfelek_jobb_table.add(ugyfel_egyenleg_lab, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 5;
-        ugyfelek_jobb.add(ugyfel_egyenleg, gbc);
+        ugyfelek_jobb_table.add(ugyfel_egyenleg, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 1;
         gbc.gridy = 6;
-        ugyfelek_jobb.add(ugyfel_befizetes, gbc);
+        ugyfelek_jobb_table.add(ugyfel_befizetes, gbc);
 
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.ipadx = 30;
-        gbc.gridx = 0;
-        gbc.gridy = 8;
-        ugyfelek_jobb.add(ugyfel_be, gbc);
 
-        gbc.gridx = 1;
-        gbc.gridy = 8;
-        ugyfelek_jobb.add(ugyfel_ki, gbc);
+        ugyfelek_jobb_lab.add(ugyfel_ugyfel_label);
+        ugyfelek_jobb.add(ugyfelek_jobb_lab, BorderLayout.PAGE_START);
+        ugyfelek_jobb.add(ugyfelek_jobb_table, BorderLayout.CENTER);
+
+        ugyfelek_jobb_end = new JPanel();
+        ugyfelek_jobb_end.add(ugyfel_be);
+        ugyfelek_jobb_end.add(ugyfel_ki);
+
+        ugyfelek_jobb.add(ugyfelek_jobb_end, BorderLayout.PAGE_END);
 
         ugyfelek.add(ugyfelek_bal);
+        ugyfelek.add(new JSeparator(JSeparator.VERTICAL));
         ugyfelek.add(ugyfelek_jobb);
     }
 
@@ -392,6 +392,7 @@ public class view extends JFrame{
 
     public void updateUgyfelList(ArrayList<String> list){
 
+        clearUgyfelDatas();
         ugyfelek_listModel.removeAllElements();
 
         for (String ListItem : list) {
@@ -402,12 +403,15 @@ public class view extends JFrame{
 
     }
 
-    public void setUgyfelekListChangeListener(Action act){
+    public void setUgyfelekListChangeListener(final Action act){
 
         ugyfelek_lista.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                act.actionPerformed(new ActionEvent(e.getSource(), 1, ugyfelekGetCurrent()));
+
+                if(ugyfelekGetCurrent() != null) {
+                    act.actionPerformed(new ActionEvent(e.getSource(), 1, ugyfelekGetCurrent()));
+                }
             }
         });
 
@@ -416,7 +420,11 @@ public class view extends JFrame{
 
     public String ugyfelekGetCurrent(){
 
-        return ugyfelek_lista.getSelectedValue().toString();
+        if (ugyfelek_lista.getSelectedValue() != null) {
+            return ugyfelek_lista.getSelectedValue().toString();
+        }else {
+            return null;
+        }
 
     }
 
@@ -426,7 +434,18 @@ public class view extends JFrame{
         ugyfel_cim.setText(data.cim);
         ugyfel_szemszam.setText(data.szemSzam);
         ugyfel_egyenleg.setText(Integer.toString(data.egyenleg));
+        ugyfel_azon.setText(data.azon);
+        ugyfel_azon.setEnabled(false);
 
+    }
+
+    public void clearUgyfelDatas(){
+        ugyfel_nev.setText("");
+        ugyfel_cim.setText("");
+        ugyfel_szemszam.setText("");
+        ugyfel_egyenleg.setText("");
+        ugyfel_azon.setText("");
+        ugyfel_azon.setEnabled(true);
     }
 
     public int befizetes(){
@@ -467,6 +486,29 @@ public class view extends JFrame{
         return ret;
     }
 
+    public ugyfelArray newUser(){
 
+        JTextField nev = new JTextField();
+        JTextField cim = new JTextField();
+        JTextField szemszam = new JTextField();
+        JTextField azon = new JTextField();
+        JPanel inside = new JPanel();
+
+        inside.setLayout(new BoxLayout(inside, BoxLayout.Y_AXIS));
+        inside.add(new JLabel("Adja meg az új ügyfél adatait:"));
+        inside.add(new JLabel("Neve:"));
+        inside.add(nev);
+        inside.add(new JLabel("Címe:"));
+        inside.add(cim);
+        inside.add(new JLabel("Személyi száma:"));
+        inside.add(szemszam);
+        inside.add(new JLabel("Azonosító:"));
+        inside.add(azon);
+
+        JOptionPane.showMessageDialog(null, inside, "Új ügyfél", JOptionPane.PLAIN_MESSAGE);
+
+        return new ugyfelArray(nev.getText(),azon.getText(),cim.getText(),szemszam.getText(),"",0,0,"",0);
+
+    }
 
 }

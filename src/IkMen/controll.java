@@ -28,7 +28,7 @@ public class controll {
                         gui.updateGepList(db.getGepekIDs());
                         break;
                     case 1: // ugyfelek:
-
+                        gui.updateUgyfelList(db.getUgyfelekList());
                         break;
                 }
             }
@@ -61,7 +61,8 @@ public class controll {
                     System.out.println("Leírás frissült!");
                     break;
                 case 3: //"ugyfelek_ujUgyfel":
-
+                    db.createUgyfel(gui.newUser());
+                    updateGui();
                     break;
                 case 4: // "ugyfel_befizetes":
                     db.setEgyenleg(gui.ugyfelekGetCurrent(), gui.befizetes());

@@ -13,10 +13,10 @@ public class ugyfelArray {
 
     public int status;
     public int egyenleg;
-    public int gepid;
+    public String gepid;
     public int pont;
 
-    public ugyfelArray(String nev, String azon, String cim, String szemSzam, String beido, int status, int egyenleg, int gepid, int pont){
+    public ugyfelArray(String nev, String azon, String cim, String szemSzam, String beido, int status, int egyenleg, String gepid, int pont){
 
         this.nev = nev;
         this.azon = azon;
