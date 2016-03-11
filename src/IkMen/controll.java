@@ -65,10 +65,12 @@ public class controll {
                     updateGui();
                     break;
                 case 4: // "ugyfel_befizetes":
-                    db.setEgyenleg(gui.ugyfelekGetCurrent(), gui.befizetes());
+                    db.setEgyenleg(gui.getCurrentUgyfel(), gui.befizetes());
                     break;
                 case 5: // "ugyfel_be":
-
+                    String uresgep = gui.UgyfelBe(db.getUresGepekIDs());
+                    db.ugyfelBe(gui.getCurrentUgyfel(), uresgep);
+                    System.out.println("Ügyfél beléptetve!");
                     break;
                 case 6: //"ugyfel_ki":
 

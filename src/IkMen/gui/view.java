@@ -1,4 +1,6 @@
-package IkMen.gui; /**
+package IkMen.gui;
+
+/**
  * Created by tom on 2016.03.03..
  */
 
@@ -17,7 +19,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
-public class view extends JFrame{
+public class view extends JFrame {
 
     private JPanel mainPanel;
     private JPanel gepek;
@@ -64,8 +66,7 @@ public class view extends JFrame{
     private JButton ugyfel_ki;
 
 
-
-    public view(Action buttonAct, ArrayList<Integer> buttonCmds, Action tabAct, Action comboAct, Action ugyfelekListaAct){
+    public view(Action buttonAct, ArrayList<Integer> buttonCmds, Action tabAct, Action comboAct, Action ugyfelekListaAct) {
 
         tabbedPane = new JTabbedPane();
 
@@ -81,25 +82,21 @@ public class view extends JFrame{
         tabbedPane.addTab("Ügyfelek", ugyfelek);
 
         mainPanel = new JPanel();
-        mainPanel.setPreferredSize(new DimensionUIResource(640,480));
-        mainPanel.setLayout(new BoxLayout(mainPanel,BoxLayout.X_AXIS));
+        mainPanel.setPreferredSize(new DimensionUIResource(640, 480));
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
         mainPanel.add(tabbedPane);
 
         getContentPane().add(mainPanel);
         setTitle("Internet Kávézó Menedzser");
-        setSize(new Dimension(640,480));
+        setSize(new Dimension(640, 480));
         setLocationRelativeTo(null); // középre nyíljon meg
 
     }
 
 
-
-
-    public void packGepek(){
+    public void packGepek() {
         gepek = new JPanel();
         gepek.setLayout(new BoxLayout(gepek, BoxLayout.Y_AXIS));
-
-
 
 
         // Gépek Fül
@@ -141,7 +138,7 @@ public class view extends JFrame{
 
     }
 
-    public void packUgyfelek(){
+    public void packUgyfelek() {
 
         ugyfelek = new JPanel();
         ugyfelek.setLayout(new BoxLayout(ugyfelek, BoxLayout.X_AXIS));
@@ -151,7 +148,7 @@ public class view extends JFrame{
         ugyfelek_jobb = new JPanel();
         ugyfelek_jobb.setLayout(new BorderLayout());
         ugyfelek_jobb_table = new JPanel();
-        ugyfelek_jobb_table.setLayout(new BoxLayout(ugyfelek_bal, BoxLayout.Y_AXIS) );
+        ugyfelek_jobb_table.setLayout(new BoxLayout(ugyfelek_bal, BoxLayout.Y_AXIS));
 
         ugyfelek_bal_lab = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ugyfelek_jobb_lab = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -267,9 +264,9 @@ public class view extends JFrame{
         ugyfelek.add(ugyfelek_jobb);
     }
 
-    public void setActionListenersToButtons(Action buttonAct, ArrayList<Integer> buttonCmds){
+    public void setActionListenersToButtons(Action buttonAct, ArrayList<Integer> buttonCmds) {
 
-        ArrayList<JButton> guiButtons = new ArrayList<JButton>(){{
+        ArrayList<JButton> guiButtons = new ArrayList<JButton>() {{
             add(gepek_ujgep);
             add(gepek_modositas);
             add(ugyfelek_ujUgyfel);
@@ -280,7 +277,7 @@ public class view extends JFrame{
         }};
 
 
-        for(int i=0; i<buttonCmds.size(); i++){
+        for (int i = 0; i < buttonCmds.size(); i++) {
 
             setButtonAction(guiButtons.get(i), buttonAct, buttonCmds.get(i));
 
@@ -288,7 +285,7 @@ public class view extends JFrame{
 
     }
 
-    public void setButtonAction(JButton button, final Action act, final Integer cmdInt){
+    public void setButtonAction(JButton button, final Action act, final Integer cmdInt) {
 
         button.addActionListener(new ActionListener() {
             @Override
@@ -300,7 +297,7 @@ public class view extends JFrame{
 
     }
 
-    public void setActionListenersToTabs(final Action tabAct){
+    public void setActionListenersToTabs(final Action tabAct) {
 
         tabbedPane.addChangeListener(new ChangeListener() {
 
@@ -316,7 +313,7 @@ public class view extends JFrame{
 
     }
 
-    public void updateGepList(ArrayList<String> list){
+    public void updateGepList(ArrayList<String> list) {
 
         gepek_geplista.removeAllItems();
 
@@ -327,19 +324,19 @@ public class view extends JFrame{
 
     }
 
-    public void setGepekComboAction(final Action act){
+    public void setGepekComboAction(final Action act) {
 
         gepek_geplista.addItemListener(new ItemListener() {
 
             public void itemStateChanged(ItemEvent arg0) {
-                act.actionPerformed( new ActionEvent(arg0.getSource(), arg0.getID(), String.valueOf(gepek_geplista.getSelectedItem())) );
+                act.actionPerformed(new ActionEvent(arg0.getSource(), arg0.getID(), String.valueOf(gepek_geplista.getSelectedItem())));
             }
         });
 
     }
 
-    public void updateLeiras(ArrayList<String> data){
-        if(data.size() == 3) {
+    public void updateLeiras(ArrayList<String> data) {
+        if (data.size() == 3) {
             String azon = data.get(0);
             String leiras = data.get(1);
             int status = Integer.parseInt(data.get(2));
@@ -356,30 +353,30 @@ public class view extends JFrame{
         }
     }
 
-    public String getCurrentGepItem(){
+    public String getCurrentGepItem() {
         return String.valueOf(gepek_geplista.getSelectedItem());
     }
 
-    public String getLeiras(){
+    public String getLeiras() {
         return gepek_leiras.getText();
     }
 
-    public ArrayList<String> makeNewMachine(){
+    public ArrayList<String> makeNewMachine() {
 
         JTextField azon = new JTextField();
-        JTextArea leiras = new JTextArea(20,50);
+        JTextArea leiras = new JTextArea(20, 50);
         JPanel inside = new JPanel();
         inside.setLayout(new BoxLayout(inside, BoxLayout.Y_AXIS));
         inside.add(new JLabel("Azonosító"));
         inside.add(azon);
         inside.add(new JLabel("Gép leírása"));
         inside.add(leiras);
-        inside.setSize(new Dimension(300,200));
+        inside.setSize(new Dimension(300, 200));
 
 
         JOptionPane.showMessageDialog(null, inside, "Új gép felvétele", JOptionPane.PLAIN_MESSAGE);
 
-        ArrayList<String> retarr =  new ArrayList<String>();
+        ArrayList<String> retarr = new ArrayList<String>();
         retarr.add(azon.getText());
         retarr.add(leiras.getText());
 
@@ -390,7 +387,7 @@ public class view extends JFrame{
 
     // Ugyfelek
 
-    public void updateUgyfelList(ArrayList<String> list){
+    public void updateUgyfelList(ArrayList<String> list) {
 
         clearUgyfelDatas();
         ugyfelek_listModel.removeAllElements();
@@ -403,14 +400,14 @@ public class view extends JFrame{
 
     }
 
-    public void setUgyfelekListChangeListener(final Action act){
+    public void setUgyfelekListChangeListener(final Action act) {
 
         ugyfelek_lista.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
 
-                if(ugyfelekGetCurrent() != null) {
-                    act.actionPerformed(new ActionEvent(e.getSource(), 1, ugyfelekGetCurrent()));
+                if (getCurrentUgyfel() != null) {
+                    act.actionPerformed(new ActionEvent(e.getSource(), 1, getCurrentUgyfel()));
                 }
             }
         });
@@ -418,17 +415,17 @@ public class view extends JFrame{
 
     }
 
-    public String ugyfelekGetCurrent(){
+    public String getCurrentUgyfel() {
 
         if (ugyfelek_lista.getSelectedValue() != null) {
             return ugyfelek_lista.getSelectedValue().toString();
-        }else {
+        } else {
             return null;
         }
 
     }
 
-    public void updateUgyfelDatas(ugyfelArray data){
+    public void updateUgyfelDatas(ugyfelArray data) {
 
         ugyfel_nev.setText(data.nev);
         ugyfel_cim.setText(data.cim);
@@ -439,7 +436,7 @@ public class view extends JFrame{
 
     }
 
-    public void clearUgyfelDatas(){
+    public void clearUgyfelDatas() {
         ugyfel_nev.setText("");
         ugyfel_cim.setText("");
         ugyfel_szemszam.setText("");
@@ -448,7 +445,7 @@ public class view extends JFrame{
         ugyfel_azon.setEnabled(true);
     }
 
-    public int befizetes(){
+    public int befizetes() {
 
 
         // Kérdés ablak...
@@ -457,7 +454,7 @@ public class view extends JFrame{
         inside.setLayout(new BoxLayout(inside, BoxLayout.Y_AXIS));
         inside.add(new JLabel("Befizetni kívánt összeg:"));
         inside.add(osszeg);
-        inside.setSize(new Dimension(300,200));
+        inside.setSize(new Dimension(300, 200));
 
 
         JOptionPane.showMessageDialog(null, inside, "Új befizetés", JOptionPane.PLAIN_MESSAGE);
@@ -465,28 +462,28 @@ public class view extends JFrame{
 
         // megerősítés
         Object[] options = {"Igen",
-                            "Nem"};
+                "Nem"};
         int n = JOptionPane.showOptionDialog(null,
-        new StringBuilder("Biztos ezt az összeget akarja hozzáadni, a ").append("NEVE").append(" nevű felhasználó számlájához?").append("\nÖsszeg: ").append(osszeg.getText()).toString(),
-        "Befizetés megerősítése",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE,
-        null,
-        options,
-        options[0]);
+                new StringBuilder("Biztos ezt az összeget akarja hozzáadni, a ").append("NEVE").append(" nevű felhasználó számlájához?").append("\nÖsszeg: ").append(osszeg.getText()).toString(),
+                "Befizetés megerősítése",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
 
 
         // válasz alapján:
         int ret = 0;
 
-        if(n == 0){
-             ret = Integer.parseInt(osszeg.getText());
+        if (n == 0) {
+            ret = Integer.parseInt(osszeg.getText());
         }
 
         return ret;
     }
 
-    public ugyfelArray newUser(){
+    public ugyfelArray newUser() {
 
         JTextField nev = new JTextField();
         JTextField cim = new JTextField();
@@ -507,8 +504,26 @@ public class view extends JFrame{
 
         JOptionPane.showMessageDialog(null, inside, "Új ügyfél", JOptionPane.PLAIN_MESSAGE);
 
-        return new ugyfelArray(nev.getText(),azon.getText(),cim.getText(),szemszam.getText(),"",0,0,"",0);
+        return new ugyfelArray(nev.getText(), azon.getText(), cim.getText(), szemszam.getText(), "", 0, 0, "", 0);
 
     }
 
+    public String UgyfelBe(ArrayList<String> gepids){
+
+        JComboBox<String> combo = new JComboBox<>();
+
+        for(String gep : gepids){
+            combo.addItem(gep);
+        }
+
+        JPanel inside = new JPanel();
+        inside.setLayout(new BoxLayout(inside, BoxLayout.Y_AXIS));
+        inside.setSize(new Dimension(300, 200));
+        inside.add(new JLabel("Válasszon egy gépet:"));
+        inside.add(combo);
+
+        JOptionPane.showMessageDialog(null, inside, "Ügyfél beléptetés", JOptionPane.PLAIN_MESSAGE);
+
+        return (String)combo.getSelectedItem();
+    }
 }

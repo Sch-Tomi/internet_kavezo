@@ -4,6 +4,7 @@ package IkMen.mysql; /**
 
 import java.sql.*;
 import java.util.ArrayList;
+
 import IkMen.mysql.helpers.ugyfelArray;
 
 public class model {
@@ -55,7 +56,7 @@ public class model {
 
     // GÉPEK --->
 
-    public ArrayList<String> getGepekIDs(){
+    public ArrayList<String> getGepekIDs() {
 
         ArrayList<String> retArr = new ArrayList<String>();
 
@@ -65,12 +66,12 @@ public class model {
             sql = "SELECT id FROM gepek";
             ResultSet rs = stmt.executeQuery(sql);
 
-            while (rs.next()){
+            while (rs.next()) {
                 retArr.add(rs.getString("id"));
             }
 
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
@@ -79,14 +80,38 @@ public class model {
         return retArr;
     }
 
-    public ArrayList<String> getGep(String azon){
+    public ArrayList<String> getUresGepekIDs() {
 
         ArrayList<String> retArr = new ArrayList<String>();
 
         try {
             stmt = conn.createStatement();
             String sql;
-            sql = "SELECT * FROM gepek WHERE id = '"+azon+"'";
+            sql = "SELECT id FROM gepek WHERE status = 0";
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                retArr.add(rs.getString("id"));
+            }
+
+
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }
+
+
+        return retArr;
+    }
+
+    public ArrayList<String> getGep(String azon) {
+
+        ArrayList<String> retArr = new ArrayList<String>();
+
+        try {
+            stmt = conn.createStatement();
+            String sql;
+            sql = "SELECT * FROM gepek WHERE id = '" + azon + "'";
             ResultSet rs = stmt.executeQuery(sql);
 
             if (rs.first()) {
@@ -95,7 +120,7 @@ public class model {
                 retArr.add(Integer.toString(rs.getInt("status")));
             }
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
@@ -106,13 +131,13 @@ public class model {
 
     }
 
-    public void creatNewGep(String id, String text){
+    public void creatNewGep(String id, String text) {
 
         try {
-            String sql = "INSERT INTO gepek VALUES ('"+id+"', '"+text+"', 0)";
+            String sql = "INSERT INTO gepek VALUES ('" + id + "', '" + text + "', 0)";
             stmt.executeUpdate(sql);
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
@@ -120,58 +145,58 @@ public class model {
 
     }
 
-    public void deleteGep(String azon){
+    public void deleteGep(String azon) {
 
         try {
-            String sql = "DELETE FROM gepek WHERE id = '"+azon+"'";
+            String sql = "DELETE FROM gepek WHERE id = '" + azon + "'";
             stmt.executeUpdate(sql);
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
 
     }
 
-    public void setGepLeiras(String id, String text){
+    public void setGepLeiras(String id, String text) {
 
         try {
             stmt = conn.createStatement();
             String sql;
-            sql = "UPDATE gepek SET leiras = '"+ text +"' WHERE id = '"+id+"'";
+            sql = "UPDATE gepek SET leiras = '" + text + "' WHERE id = '" + id + "'";
             stmt.executeUpdate(sql);
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
 
     }
 
-    public void setGepAvaliable(String id){
+    public void setGepAvaliable(String id) {
 
         try {
             stmt = conn.createStatement();
             String sql;
-            sql = "UPDATE gepek SET status = 0 WHERE id = '"+id+"'";
+            sql = "UPDATE gepek SET status = 0 WHERE id = '" + id + "'";
             stmt.executeUpdate(sql);
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
 
     }
 
-    public void setGepUnAvaliable(String id){
+    public void setGepUnAvaliable(String id) {
 
         try {
             stmt = conn.createStatement();
             String sql;
-            sql = "UPDATE gepek SET status = 1 WHERE id = '"+id+"'";
+            sql = "UPDATE gepek SET status = 1 WHERE id = '" + id + "'";
             stmt.executeUpdate(sql);
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
@@ -182,7 +207,7 @@ public class model {
 
     // Ugyfelek --->
 
-    public ArrayList<String> getUgyfelekList(){
+    public ArrayList<String> getUgyfelekList() {
 
         ArrayList<String> retArr = new ArrayList<String>();
 
@@ -192,12 +217,12 @@ public class model {
             sql = "SELECT azon FROM ugyfelek";
             ResultSet rs = stmt.executeQuery(sql);
 
-            while (rs.next()){
+            while (rs.next()) {
                 retArr.add(rs.getString("azon"));
             }
 
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
@@ -206,7 +231,7 @@ public class model {
         return retArr;
     }
 
-    public ugyfelArray getUgyfel(String KerAzon){
+    public ugyfelArray getUgyfel(String KerAzon) {
 
         String nev;
         String azon;
@@ -223,7 +248,7 @@ public class model {
         try {
             stmt = conn.createStatement();
             String sql;
-            sql = "SELECT * FROM ugyfelek WHERE azon = '"+KerAzon+"'";
+            sql = "SELECT * FROM ugyfelek WHERE azon = '" + KerAzon + "'";
             ResultSet rs = stmt.executeQuery(sql);
             rs.first();
 
@@ -238,9 +263,9 @@ public class model {
             gepid = rs.getString("gepid");
             pont = rs.getInt("pont");
 
-            return new ugyfelArray(nev, azon, cim,szemSzam, beido, status, egyenleg, gepid, pont);
+            return new ugyfelArray(nev, azon, cim, szemSzam, beido, status, egyenleg, gepid, pont);
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
@@ -248,57 +273,57 @@ public class model {
         return null;
     }
 
-    public void setUgyfel(ugyfelArray ugyfel){
+    public void setUgyfel(ugyfelArray ugyfel) {
 
         try {
             stmt = conn.createStatement();
             String sql;
             sql = "UPDATE ugyfelek SET " +
-                    " nev = "+ugyfel.nev +
-                    " cim = "+ugyfel.cim +
-                    " szemSzam = "+ugyfel.szemSzam+
-                    " WHERE id = "+ugyfel.azon;
+                    " nev = " + ugyfel.nev +
+                    " cim = " + ugyfel.cim +
+                    " szemSzam = " + ugyfel.szemSzam +
+                    " WHERE id = " + ugyfel.azon;
             stmt.executeUpdate(sql);
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
 
     }
 
-    public void createUgyfel(ugyfelArray ugyfel){
+    public void createUgyfel(ugyfelArray ugyfel) {
 
         try {
             stmt = conn.createStatement();
             String sql;
             sql = "INSERT INTO ugyfelek VALUES (" +
-                    "'"+ ugyfel.azon +"', "+
-                    "'"+ ugyfel.cim +"', "+
-                    "'"+ ugyfel.szemSzam+"', "+
-                    "'"+ ugyfel.nev +"', "+
-                    "'"+ ugyfel.beido +"', "+
-                    "'"+ ugyfel.egyenleg +"', "+
-                    "'"+ ugyfel.status +"', "+
-                    "'"+ ugyfel.gepid +"', "+
-                    "'"+ ugyfel.pont+"')";
+                    "'" + ugyfel.azon + "', " +
+                    "'" + ugyfel.cim + "', " +
+                    "'" + ugyfel.szemSzam + "', " +
+                    "'" + ugyfel.nev + "', " +
+                    "'" + ugyfel.beido + "', " +
+                    "'" + ugyfel.egyenleg + "', " +
+                    "'" + ugyfel.status + "', " +
+                    "'" + ugyfel.gepid + "', " +
+                    "'" + ugyfel.pont + "')";
 
             stmt.executeUpdate(sql);
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
 
     }
 
-    public void setEgyenleg(String azon, int money){
+    public void setEgyenleg(String azon, int money) {
 
         try {
             stmt = conn.createStatement();
             String sql;
 
-            sql = "SELECT egyenleg FROM ugyfelek WHERE azon = "+ azon;
+            sql = "SELECT egyenleg FROM ugyfelek WHERE azon = " + azon;
             ResultSet rs = stmt.executeQuery(sql);
             rs.first();
 
@@ -307,17 +332,35 @@ public class model {
             int newMoney = current + money;
 
             sql = "UPDATE ugyfelek SET " +
-                    " egyenleg = "+ Integer.toString(newMoney)  +
-                    " WHERE id = "+azon;
+                    " egyenleg = " + Integer.toString(newMoney) +
+                    " WHERE id = " + azon;
             stmt.executeUpdate(sql);
 
-        }catch(SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
 
 
+    }
 
+    public void ugyfelBe(String ugyfel, String gepid){
+        try {
+            stmt = conn.createStatement();
+            String sql;
+            sql = "UPDATE ugyfelek SET " +
+                    " status = 1" +
+                    " gepid = " + gepid +
+                    " beido = " + 111 + // TODO: TIME STAMP!!!
+                    " WHERE id = " + ugyfel;
+            stmt.executeUpdate(sql);
+
+            setGepUnAvaliable(gepid);
+
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }
     }
 
 
