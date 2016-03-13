@@ -1,9 +1,13 @@
 package IkMen.gui;
 
 /**
+ *
+ * A program vizuális felülete.
+ *
  * Created by tom on 2016.03.03..
  */
 
+import IkMen.mysql.helpers.kilepesAdatok;
 import IkMen.mysql.helpers.ugyfelArray;
 
 import javax.swing.*;
@@ -38,7 +42,8 @@ public class view extends JFrame {
 
     private JPanel ugyfelek_bal;
     private JPanel ugyfelek_jobb;
-    private JPanel ugyfelek_jobb_table;
+    private JPanel ugyfelek_jobb_table_data;
+    private JPanel ugyfelek_jobb_table_gombok;
     private JPanel ugyfelek_bal_lab;
     private JPanel ugyfelek_jobb_lab;
     private JPanel ugyfelek_jobb_end;
@@ -64,9 +69,41 @@ public class view extends JFrame {
     private JButton ugyfel_befizetes;
     private JButton ugyfel_be;
     private JButton ugyfel_ki;
+    private JButton ugyfel_torles;
+    private JButton ugyfel_modositas;
+    private JLabel ugyfel_statusz_lab;
+    private JTextField ugyfel_statusz;
+    private JLabel ugyfel_pont_lab;
+    private JTextField ugyfel_pont;
 
 
     public view(Action buttonAct, ArrayList<Integer> buttonCmds, Action tabAct, Action comboAct, Action ugyfelekListaAct) {
+
+        //Set Lookout
+        try {
+            // Set System L&F
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        }
+        catch (UnsupportedLookAndFeelException e) {
+            // handle exception
+            e.printStackTrace();
+            System.out.println("[LookOut] Nincs NimbusLookAndFeel téma...");
+        }
+        catch (ClassNotFoundException e) {
+            // handle exception
+            e.printStackTrace();
+            System.out.println("[LookOut] Nincs NimbusLookAndFeel téma...");
+        }
+        catch (InstantiationException e) {
+            // handle exception
+            e.printStackTrace();
+            System.out.println("[LookOut] Nincs NimbusLookAndFeel téma...");
+        }
+        catch (IllegalAccessException e) {
+            // handle exception
+            e.printStackTrace();
+            System.out.println("[LookOut] Nincs NimbusLookAndFeel téma...");
+        }
 
         tabbedPane = new JTabbedPane();
 
@@ -147,8 +184,11 @@ public class view extends JFrame {
         ugyfelek_bal.setLayout(new BorderLayout());
         ugyfelek_jobb = new JPanel();
         ugyfelek_jobb.setLayout(new BorderLayout());
-        ugyfelek_jobb_table = new JPanel();
-        ugyfelek_jobb_table.setLayout(new BoxLayout(ugyfelek_bal, BoxLayout.Y_AXIS));
+        ugyfelek_jobb_table_data = new JPanel();
+        ugyfelek_jobb_table_gombok = new JPanel();
+
+
+
 
         ugyfelek_bal_lab = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ugyfelek_jobb_lab = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -181,7 +221,14 @@ public class view extends JFrame {
         ugyfel_befizetes = new JButton("Befizetés");
         ugyfel_be = new JButton("Beléptetés");
         ugyfel_ki = new JButton("Kiléptetés");
+        ugyfel_torles = new JButton("Törlés");
+        ugyfel_modositas = new JButton("Módosítás");
 
+        ugyfel_statusz_lab = new JLabel("Állapota:");
+        ugyfel_statusz = new JTextField("");
+
+        ugyfel_pont_lab = new JLabel("Pontjai:");
+        ugyfel_pont = new JTextField("");
 
         // Baloldal
         ugyfelek_bal_lab.add(ugyfelek_ugyfelek_label);
@@ -190,74 +237,139 @@ public class view extends JFrame {
         ugyfelek_bal.add(ugyfelek_ujUgyfel, BorderLayout.PAGE_END);
 
         // Jobboldal
+
+        //--- DATA
+
         GridBagLayout layout = new GridBagLayout();
-        ugyfelek_jobb_table.setLayout(layout);
+        ugyfelek_jobb_table_data.setLayout(layout);
         GridBagConstraints gbc = new GridBagConstraints();
 
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.ipadx = 2;
-        ugyfelek_jobb_table.add(ugyfel_nev_lab, gbc);
+        gbc.weightx = 0.1;
+        ugyfelek_jobb_table_data.add(ugyfel_nev_lab, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
-        gbc.gridwidth = 1;
-        ugyfelek_jobb_table.add(ugyfel_nev, gbc);
+        ugyfelek_jobb_table_data.add(ugyfel_nev, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 2;
-        ugyfelek_jobb_table.add(ugyfel_cim_lab, gbc);
+        gbc.weightx = 0.1;
+        ugyfelek_jobb_table_data.add(ugyfel_cim_lab, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 2;
-        ugyfelek_jobb_table.add(ugyfel_cim, gbc);
+        gbc.weightx = 1.0;
+        ugyfelek_jobb_table_data.add(ugyfel_cim, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 3;
-        ugyfelek_jobb_table.add(ugyfel_szemszam_lab, gbc);
+        gbc.weightx = 0.1;
+        ugyfelek_jobb_table_data.add(ugyfel_szemszam_lab, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 3;
-        ugyfelek_jobb_table.add(ugyfel_szemszam, gbc);
+        gbc.weightx = 1.0;
+        ugyfelek_jobb_table_data.add(ugyfel_szemszam, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 4;
-        ugyfelek_jobb_table.add(ugyfel_azon_lab, gbc);
+        gbc.weightx = 0.1;
+        ugyfelek_jobb_table_data.add(ugyfel_azon_lab, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 4;
-        ugyfelek_jobb_table.add(ugyfel_azon, gbc);
+        gbc.weightx = 1.0;
+        ugyfelek_jobb_table_data.add(ugyfel_azon, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 5;
-        ugyfelek_jobb_table.add(ugyfel_egyenleg_lab, gbc);
+        gbc.weightx = 0.1;
+        ugyfelek_jobb_table_data.add(ugyfel_statusz_lab, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 5;
-        ugyfelek_jobb_table.add(ugyfel_egyenleg, gbc);
+        gbc.weightx = 1.0;
+        ugyfelek_jobb_table_data.add(ugyfel_statusz, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.weightx = 0.1;
+        ugyfelek_jobb_table_data.add(ugyfel_pont_lab, gbc);
+
         gbc.gridx = 1;
         gbc.gridy = 6;
-        ugyfelek_jobb_table.add(ugyfel_befizetes, gbc);
+        gbc.weightx = 1.0;
+        ugyfelek_jobb_table_data.add(ugyfel_pont, gbc);
+
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.weightx = 0.1;
+        ugyfelek_jobb_table_data.add(ugyfel_egyenleg_lab, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        gbc.weightx = 1.0;
+        ugyfelek_jobb_table_data.add(ugyfel_egyenleg, gbc);
+
+        // --- DATA
+
+        // GOMBOK
+
+        GridBagLayout layout_g = new GridBagLayout();
+        ugyfelek_jobb_table_gombok.setLayout(layout_g);
+        GridBagConstraints gbc2 = new GridBagConstraints();
+
+        gbc2.weightx = 1;
+
+        gbc2.fill = GridBagConstraints.HORIZONTAL;
+        gbc2.gridx = 1;
+        gbc2.gridy = 0;
+        ugyfelek_jobb_table_gombok.add(ugyfel_befizetes, gbc2);
+
+
+        gbc2.fill = GridBagConstraints.HORIZONTAL;
+        gbc2.gridx = 0;
+        gbc2.gridy = 1;
+        ugyfelek_jobb_table_gombok.add(ugyfel_modositas, gbc2);
+
+        gbc2.gridx = 1;
+        gbc2.gridy = 1;
+        ugyfelek_jobb_table_gombok.add(ugyfel_torles, gbc2);
+
+        gbc2.fill = GridBagConstraints.HORIZONTAL;
+        gbc2.gridx = 0;
+        gbc2.gridy = 2;
+        ugyfelek_jobb_table_gombok.add(ugyfel_be, gbc2);
+
+        gbc2.gridx = 1;
+        gbc2.gridy = 2;
+        ugyfelek_jobb_table_gombok.add(ugyfel_ki, gbc2);
+
+
 
 
         ugyfelek_jobb_lab.add(ugyfel_ugyfel_label);
         ugyfelek_jobb.add(ugyfelek_jobb_lab, BorderLayout.PAGE_START);
-        ugyfelek_jobb.add(ugyfelek_jobb_table, BorderLayout.CENTER);
+        ugyfelek_jobb.add(ugyfelek_jobb_table_data, BorderLayout.CENTER);
+        ugyfelek_jobb.add(ugyfelek_jobb_table_gombok, BorderLayout.PAGE_END);
 
-        ugyfelek_jobb_end = new JPanel();
-        ugyfelek_jobb_end.add(ugyfel_be);
-        ugyfelek_jobb_end.add(ugyfel_ki);
 
-        ugyfelek_jobb.add(ugyfelek_jobb_end, BorderLayout.PAGE_END);
+//        ugyfelek_jobb_end = new JPanel();
+//        ugyfelek_jobb_end.add(ugyfel_be);
+//        ugyfelek_jobb_end.add(ugyfel_ki);
+//        ugyfelek_jobb.add(ugyfelek_jobb_end, BorderLayout.PAGE_END);
 
         ugyfelek.add(ugyfelek_bal);
         ugyfelek.add(new JSeparator(JSeparator.VERTICAL));
@@ -274,6 +386,8 @@ public class view extends JFrame {
             add(ugyfel_be);
             add(ugyfel_ki);
             add(gepek_torles);
+            add(ugyfel_torles);
+            add(ugyfel_modositas);
         }};
 
 
@@ -432,7 +546,18 @@ public class view extends JFrame {
         ugyfel_szemszam.setText(data.szemSzam);
         ugyfel_egyenleg.setText(Integer.toString(data.egyenleg));
         ugyfel_azon.setText(data.azon);
-        ugyfel_azon.setEnabled(false);
+        ugyfel_azon.setEditable(false);
+        ugyfel_egyenleg.setEditable(false);
+        ugyfel_pont.setText(Integer.toString(data.pont));
+        ugyfel_pont.setEditable(false);
+
+        if(data.status == 1){
+            ugyfel_statusz.setText("Bejelentkezve - "+data.gepid);
+        }else{
+            ugyfel_statusz.setText("Kijelentkezve");
+        }
+        ugyfel_statusz.setEditable(false);
+
 
     }
 
@@ -442,7 +567,11 @@ public class view extends JFrame {
         ugyfel_szemszam.setText("");
         ugyfel_egyenleg.setText("");
         ugyfel_azon.setText("");
-        ugyfel_azon.setEnabled(true);
+        ugyfel_azon.setEditable(true);
+        ugyfel_statusz.setText("");
+        ugyfel_statusz.setEditable(true);
+        ugyfel_pont.setText("");
+        ugyfel_pont.setEditable(true);
     }
 
     public int befizetes() {
@@ -464,7 +593,7 @@ public class view extends JFrame {
         Object[] options = {"Igen",
                 "Nem"};
         int n = JOptionPane.showOptionDialog(null,
-                new StringBuilder("Biztos ezt az összeget akarja hozzáadni, a ").append("NEVE").append(" nevű felhasználó számlájához?").append("\nÖsszeg: ").append(osszeg.getText()).toString(),
+                new StringBuilder("Biztos ezt az összeget akarja hozzáadni, a ").append(getCurrentUgyfel()).append(" nevű felhasználó számlájához?").append("\nÖsszeg: ").append(osszeg.getText()).toString(),
                 "Befizetés megerősítése",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
@@ -510,7 +639,7 @@ public class view extends JFrame {
 
     public String UgyfelBe(ArrayList<String> gepids){
 
-        JComboBox<String> combo = new JComboBox<>();
+        JComboBox<String> combo = new JComboBox<String>();
 
         for(String gep : gepids){
             combo.addItem(gep);
@@ -526,4 +655,35 @@ public class view extends JFrame {
 
         return (String)combo.getSelectedItem();
     }
+
+    public ugyfelArray getCurrentUgyfelData(){
+        return new ugyfelArray(ugyfel_nev.getText(), ugyfel_azon.getText(), ugyfel_cim.getText(), ugyfel_szemszam.getText(), "", 0,0,"",0);
+    }
+
+
+    // OTHER
+
+    /**
+
+     Used for error messages.
+        ERROR_MESSAGE = 0;
+
+     Used for information messages.
+        INFORMATION_MESSAGE = 1;
+
+     Used for warning messages.
+        WARNING_MESSAGE = 2;
+
+     Used for questions.
+        QUESTION_MESSAGE = 3;
+    */
+    public void Notification(int type, String title, String msg){
+
+        JOptionPane.showMessageDialog(null,
+                msg,
+                title,
+                type);
+    }
+
+
 }

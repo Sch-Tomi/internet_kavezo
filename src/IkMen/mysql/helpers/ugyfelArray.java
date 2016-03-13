@@ -1,7 +1,10 @@
 package IkMen.mysql.helpers;
 
 /**
- * Created by tom on 2016.03.03..
+ *
+ * Ügyfelek adatait egybe gyüjtő osztály.
+ *
+ * Created by tom
  */
 public class ugyfelArray {
 
