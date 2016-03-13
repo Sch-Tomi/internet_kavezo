@@ -24,6 +24,14 @@ leiras	    |   text    |
 status	    |   int(1)  |
 ------------------------|
 
+
+befizetesek
+----------------****----|
+azon    |	varchar(30) |
+osszeg  |	int(11)     |
+------------------------|
+
+
 -- phpMyAdmin SQL Dump
 -- version 4.5.5.1
 -- http://www.phpmyadmin.net

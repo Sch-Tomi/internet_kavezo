@@ -9,6 +9,7 @@ package IkMen;
 
 
 import IkMen.exceptions.DataBaseException;
+import IkMen.exceptions.GuiException;
 import IkMen.exceptions.SzamlaException;
 import IkMen.gui.view;
 import IkMen.mysql.helpers.kilepesAdatok;
@@ -43,6 +44,12 @@ public class controll {
                             break;
                         case 1: // ugyfelek:
                             gui.updateUgyfelList(db.getUgyfelekList());
+                            break;
+                        case 2: // befizetesek
+                            gui.updateBefizetesekList(db.getBefizetesekList());
+                            break;
+                        case 3:
+                            gui.updateHasznalatList(db.getHasznalatList());
                             break;
                     }
                 }catch (DataBaseException dbe){
@@ -159,6 +166,8 @@ public class controll {
                 showExceptionError(dbe);
             }catch (SzamlaException sze){
                 showExceptionError(sze);
+            }catch (GuiException ge){
+                showExceptionError(ge);
             }
 
             updateGui();

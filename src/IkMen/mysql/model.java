@@ -16,10 +16,12 @@ import IkMen.mysql.helpers.DateUtils;
 import IkMen.mysql.helpers.kilepesAdatok;
 import IkMen.mysql.helpers.ugyfelArray;
 
+import javax.xml.crypto.Data;
+
 public class model {
 
     // JDBC driver name and database URL
-    private static final String DB_URL = "jdbc:mysql://192.168.1.101:3306/ikmen";
+    private static final String DB_URL = "jdbc:mysql://192.168.1.102:3306/ikmen";
 
     //  Database credentials
     private static final String USER = "test";
@@ -375,6 +377,31 @@ public class model {
         }
 
 
+        // Ha befizetés történt és nem használat utána levonás akkor logolunk
+        if(money > 0){
+            setEgyenlegLog(azon, money);
+        }
+
+
+    }
+
+    public void setEgyenlegLog(String azon, int money) throws DataBaseException{
+
+        try {
+            stmt = conn.createStatement();
+
+            String sql = "INSERT INTO befizetesek VALUES( " +
+                    "'"+azon+"',"+
+                    "'"+Integer.toString(money)+"')";
+
+            stmt.executeUpdate(sql);
+
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+            throw new DataBaseException("[SQL] Nem sikerült a befizetésről logot készíteni.");
+        }
+
     }
 
     public void ugyfelBe(String ugyfel, String gepid) throws DataBaseException{
@@ -410,6 +437,7 @@ public class model {
             stmt.executeUpdate(sql);
 
             setGepAvaliable(data.gepid);
+            setUgyfelKiLog(data.azon,data.gepid, data.beido, new Timestamp(new java.util.Date().getTime()).toString());
 
         } catch (SQLException se) {
             //Handle errors for JDBC
@@ -418,6 +446,23 @@ public class model {
         }
     }
 
+    public void setUgyfelKiLog(String azon, String gepid, String be, String ki){
+
+        try {
+            stmt = conn.createStatement();
+
+            String sql = "INSERT INTO hasznalat VALUES('"+azon+"','"+gepid+"','"+be+"','"+ki+"' )";
+
+            System.out.println(sql);
+            stmt.executeUpdate(sql);
+
+        }catch (SQLException se){
+            se.printStackTrace();
+            throw new DataBaseException("[SQL] Nem sikerült használati logot készíteni.");
+        }
+
+
+    }
 
     public kilepesAdatok getUgyfelKiAdat(String KerAzon) throws DataBaseException{
         String nev;
@@ -512,5 +557,63 @@ public class model {
 
 
     // <--- Ugyfelek
+
+    // Befizetesek
+
+    public ArrayList<String> getBefizetesekList(){
+
+        ArrayList<String> retArr = new ArrayList<String>();
+
+        try {
+            stmt = conn.createStatement();
+            String sql;
+            sql = "SELECT * FROM befizetesek";
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                retArr.add(rs.getString("azon")+" : "+rs.getString("osszeg"));
+            }
+
+
+        } catch (SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+            throw new DataBaseException("[SQL] Nem sikerült megkapni a befizetesek listát.");
+        }
+
+
+        return retArr;
+
+
+    }
+
+    //Használat
+    public ArrayList<String> getHasznalatList(){
+
+        ArrayList<String> retArr = new ArrayList<String>();
+
+        try {
+            stmt = conn.createStatement();
+            String sql;
+            sql = "SELECT * FROM hasznalat";
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                retArr.add(rs.getString("azon")+" : "+rs.getString("gepid")+"      "+rs.getString("be")+" - "+rs.getString("ki"));
+            }
+
+
+        } catch (SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+            throw new DataBaseException("[SQL] Nem sikerült megkapni a használat listát.");
+        }
+
+
+        return retArr;
+
+
+    }
+
 
 }

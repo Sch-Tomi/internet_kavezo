@@ -7,8 +7,9 @@ package IkMen.gui;
  * Created by tom on 2016.03.03..
  */
 
-import IkMen.mysql.helpers.kilepesAdatok;
+import IkMen.exceptions.GuiException;
 import IkMen.mysql.helpers.ugyfelArray;
+import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -76,6 +77,15 @@ public class view extends JFrame {
     private JLabel ugyfel_pont_lab;
     private JTextField ugyfel_pont;
 
+    private JPanel befizetesek;
+    private JList befizetesek_lista;
+    private JScrollPane befizetesek_lista_scroll;
+    private DefaultListModel befizetesek_lista_model;
+
+    private JPanel hasznalat;
+    private JList hasznalat_lista;
+    private JScrollPane hasznalat_lista_scroll;
+    private DefaultListModel hasznalat_lista_model;
 
     public view(Action buttonAct, ArrayList<Integer> buttonCmds, Action tabAct, Action comboAct, Action ugyfelekListaAct) {
 
@@ -109,6 +119,8 @@ public class view extends JFrame {
 
         packGepek();
         packUgyfelek();
+        packBefizetesek();
+        packHasznalat();
 
         setActionListenersToButtons(buttonAct, buttonCmds);
         setActionListenersToTabs(tabAct);
@@ -117,6 +129,9 @@ public class view extends JFrame {
 
         tabbedPane.addTab("Gépek", gepek);
         tabbedPane.addTab("Ügyfelek", ugyfelek);
+        tabbedPane.addTab("Befizetesek", befizetesek);
+        tabbedPane.addTab("Használat", hasznalat);
+
 
         mainPanel = new JPanel();
         mainPanel.setPreferredSize(new DimensionUIResource(640, 480));
@@ -376,6 +391,44 @@ public class view extends JFrame {
         ugyfelek.add(ugyfelek_jobb);
     }
 
+    public void packBefizetesek(){
+
+        befizetesek = new JPanel();
+        befizetesek.setLayout(new BorderLayout());
+
+        befizetesek_lista_model = new DefaultListModel();
+
+        befizetesek_lista = new JList(befizetesek_lista_model);
+        befizetesek_lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        befizetesek_lista.setLayoutOrientation(JList.VERTICAL);
+        befizetesek_lista.setVisibleRowCount(-1);
+
+        befizetesek_lista_scroll = new JScrollPane(befizetesek_lista);
+        befizetesek_lista_scroll.setSize(new Dimension(250, 80));
+
+        befizetesek.add(befizetesek_lista,BorderLayout.CENTER);
+
+    }
+
+    public void packHasznalat(){
+        hasznalat = new JPanel();
+        hasznalat.setLayout(new BorderLayout());
+
+        hasznalat_lista_model = new DefaultListModel();
+
+        hasznalat_lista = new JList(hasznalat_lista_model);
+        hasznalat_lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        hasznalat_lista.setLayoutOrientation(JList.VERTICAL);
+        hasznalat_lista.setVisibleRowCount(-1);
+
+        hasznalat_lista_scroll = new JScrollPane(hasznalat_lista);
+        hasznalat_lista_scroll.setSize(new Dimension(250, 80));
+
+        hasznalat.add(hasznalat_lista,BorderLayout.CENTER);
+
+    }
+
+
     public void setActionListenersToButtons(Action buttonAct, ArrayList<Integer> buttonCmds) {
 
         ArrayList<JButton> guiButtons = new ArrayList<JButton>() {{
@@ -606,7 +659,12 @@ public class view extends JFrame {
         int ret = 0;
 
         if (n == 0) {
-            ret = Integer.parseInt(osszeg.getText());
+            try {
+                ret = Integer.parseInt(osszeg.getText());
+            }catch (NumberFormatException nfe){
+                nfe.printStackTrace();
+                throw new GuiException("[GUI] Nem számot adott meg!");
+            }
         }
 
         return ret;
@@ -660,6 +718,29 @@ public class view extends JFrame {
         return new ugyfelArray(ugyfel_nev.getText(), ugyfel_azon.getText(), ugyfel_cim.getText(), ugyfel_szemszam.getText(), "", 0,0,"",0);
     }
 
+    // Befizetesek
+    public void updateBefizetesekList(ArrayList<String> list){
+
+        befizetesek_lista_model.removeAllElements();
+
+        for (String ListItem : list) {
+            befizetesek_lista_model.addElement(ListItem);
+        }
+
+        befizetesek_lista.updateUI();
+    }
+
+    //Használat
+    public void updateHasznalatList(ArrayList<String> list){
+
+        hasznalat_lista_model.removeAllElements();
+
+        for (String ListItem : list) {
+            hasznalat_lista_model.addElement(ListItem);
+        }
+
+        hasznalat_lista.updateUI();
+    }
 
     // OTHER
 
