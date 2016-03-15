@@ -8,28 +8,27 @@ package IkMen;
  */
 
 
-import IkMen.exceptions.DataBaseException;
-import IkMen.exceptions.GuiException;
-import IkMen.exceptions.SzamlaException;
+import IkMen.exceptions.*;
 import IkMen.gui.view;
 import IkMen.mysql.helpers.kilepesAdatok;
 import IkMen.mysql.helpers.ugyfelArray;
 import IkMen.mysql.model;
+import IkMen.tools.configReader;
 import IkMen.tools.szamla;
+import IkMen.tools.szamlak;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 public class controll {
 
     private view gui;
     private model db;
     private szamla szamla;
+    private szamlak szamlak;
+    private configReader config;
 
     private final Action tabAction = new AbstractAction() {
         @Override
@@ -51,9 +50,14 @@ public class controll {
                         case 3:
                             gui.updateHasznalatList(db.getHasznalatList());
                             break;
+                        case 4:
+                            gui.updateSzamlak(szamlak.getList());
+                            break;
                     }
                 }catch (DataBaseException dbe){
                     showExceptionError(dbe);
+                }catch (SzamlakException szke){
+                    showExceptionError(szke);
                 }
 
             }
@@ -63,13 +67,11 @@ public class controll {
     private final Action comboAction = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            try {
-                gui.updateLeiras(db.getGep(e.getActionCommand()));
-            }catch (DataBaseException dbe){
-                showExceptionError(dbe);
-            }
-
-
+                try {
+                    gui.updateLeiras(db.getGep(e.getActionCommand()));
+                }catch (DataBaseException dbe){
+                    showExceptionError(dbe);
+                }
             }
 
     };
@@ -101,7 +103,7 @@ public class controll {
 
                     case 4: // "ugyfel_befizetes":
                         db.setEgyenleg(gui.getCurrentUgyfel(), gui.befizetes());
-                        gui.Notification(JOptionPane.INFORMATION_MESSAGE, "Sikeres Művelet", "Az ügyfél számlájához hozzá adtuk az összeget!");
+                        gui.Notification(JOptionPane.INFORMATION_MESSAGE, "Sikeres Művelet", "Az ügyfél számlájához hozzáadtuk az összeget!");
                         break;
 
                     case 5: // "ugyfel_be":
@@ -111,6 +113,7 @@ public class controll {
                         break;
 
                     case 6: //"ugyfel_ki":
+
                         kilepesAdatok data = db.getUgyfelKiAdat(gui.getCurrentUgyfel());
 
                         if(data.fizetendo <= data.egyenleg){
@@ -118,9 +121,9 @@ public class controll {
                             szamla.create_szamla(data);
                             db.ugyfelKi(data);
 
-                            gui.Notification(JOptionPane.INFORMATION_MESSAGE, "Sikeres Művelet", "Az ügyfél sikeresen kilépett a számla a szokott helyen található!");
+                            gui.Notification(JOptionPane.INFORMATION_MESSAGE, "Sikeres Művelet", "Az ügyfél sikeresen kilépett a számla a számla fülön megtekinthető!");
                         }else{
-                            gui.Notification(JOptionPane.WARNING_MESSAGE, "Kiléptetési Hiba!", "A felhasználó számláján nicns elég pénz.");
+                            gui.Notification(JOptionPane.WARNING_MESSAGE, "Kiléptetési Hiba!", "A felhasználó számláján nincs elég pénz.");
                         }
 
                         break;
@@ -188,26 +191,41 @@ public class controll {
         }
     };
 
+    public Action szamlakListaAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            try {
+                gui.showSzamla(szamlak.getHtml(gui.getCurrentSzamla()));
+            }catch (SzamlakException szke){
+                showExceptionError(szke);
+            }
+
+        }
+    };
+
+
     public controll(){
 
-        int price = 0;
+        int price;
 
-        ArrayList<Exception> errors = new ArrayList<Exception>();
+        ArrayList<Exception> errors = new ArrayList<>();
 
         try {
-            List<String> lines = Files.readAllLines(Paths.get("src/price.txt"));
-            price = Integer.parseInt(lines.get(0));
 
-            db = new model(price);
-
-            szamla = new szamla(price);
+            config = new configReader();
+            db = new model(config.getPRICE(), config.getDB_URL(), config.getDB_USER(), config.getDB_PASS());
+            szamla = new szamla(config.getPRICE());
+            szamlak = new szamlak();
 
         }catch (DataBaseException dbe){
             errors.add(dbe);
         }catch (SzamlaException sze){
             errors.add(sze);
-        }catch (IOException ioe){
-            errors.add(new Exception("[Ár] Hiba az olvasásánál!"));
+        }catch (SzamlakException szke){
+            errors.add(szke);
+        }catch (ConfigException cfge){
+            errors.add(cfge);
         }
 
         ArrayList<Integer> guiButtons = new ArrayList<Integer>(){{
@@ -225,14 +243,12 @@ public class controll {
 
 
 
-        gui = new view(controllAction, guiButtons, tabAction, comboAction, ugyfelekListaAction);
+        gui = new view(controllAction, guiButtons, tabAction, comboAction, ugyfelekListaAction, szamlakListaAction);
         gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         gui.setVisible(true);
 
         //Print Exceptions...
-        for(Exception ex : errors) {
-            showExceptionError(ex);
-        }
+        errors.forEach(this::showExceptionError);
 
         updateGui();
     }

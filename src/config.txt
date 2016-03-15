@@ -1,0 +1,4 @@
+PRICE = 300
+DB_URL = jdbc:mysql://192.168.1.105:3306/ikmen
+DB_USER = test
+DB_PASS = qwe

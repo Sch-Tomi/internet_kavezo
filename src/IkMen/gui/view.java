@@ -1,15 +1,17 @@
 package IkMen.gui;
 
 /**
- *
  * A program vizuális felülete.
- *
+ * <p>
  * Created by tom on 2016.03.03..
  */
 
 import IkMen.exceptions.GuiException;
 import IkMen.mysql.helpers.ugyfelArray;
-import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.web.WebView;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -87,29 +89,32 @@ public class view extends JFrame {
     private JScrollPane hasznalat_lista_scroll;
     private DefaultListModel hasznalat_lista_model;
 
-    public view(Action buttonAct, ArrayList<Integer> buttonCmds, Action tabAct, Action comboAct, Action ugyfelekListaAct) {
+    private JPanel szamlak;
+    private JList szamlak_lista;
+    private JScrollPane szamlak_lista_scroll;
+    private DefaultListModel szamlak_lista_model;
+    private JFXPanel jfxPanel;
+
+
+    public view(Action buttonAct, ArrayList<Integer> buttonCmds, Action tabAct, Action comboAct, Action ugyfelekListaAct, Action szamlakListaAct) {
 
         //Set Lookout
         try {
             // Set System L&F
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        }
-        catch (UnsupportedLookAndFeelException e) {
+        } catch (UnsupportedLookAndFeelException e) {
             // handle exception
             e.printStackTrace();
             System.out.println("[LookOut] Nincs NimbusLookAndFeel téma...");
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             // handle exception
             e.printStackTrace();
             System.out.println("[LookOut] Nincs NimbusLookAndFeel téma...");
-        }
-        catch (InstantiationException e) {
+        } catch (InstantiationException e) {
             // handle exception
             e.printStackTrace();
             System.out.println("[LookOut] Nincs NimbusLookAndFeel téma...");
-        }
-        catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             // handle exception
             e.printStackTrace();
             System.out.println("[LookOut] Nincs NimbusLookAndFeel téma...");
@@ -121,16 +126,19 @@ public class view extends JFrame {
         packUgyfelek();
         packBefizetesek();
         packHasznalat();
+        packSzamlak();
 
         setActionListenersToButtons(buttonAct, buttonCmds);
         setActionListenersToTabs(tabAct);
         setGepekComboAction(comboAct);
         setUgyfelekListChangeListener(ugyfelekListaAct);
+        setSzamlakListChangeListener(szamlakListaAct);
 
         tabbedPane.addTab("Gépek", gepek);
         tabbedPane.addTab("Ügyfelek", ugyfelek);
         tabbedPane.addTab("Befizetesek", befizetesek);
         tabbedPane.addTab("Használat", hasznalat);
+        tabbedPane.addTab("Számlák", szamlak);
 
 
         mainPanel = new JPanel();
@@ -201,8 +209,6 @@ public class view extends JFrame {
         ugyfelek_jobb.setLayout(new BorderLayout());
         ugyfelek_jobb_table_data = new JPanel();
         ugyfelek_jobb_table_gombok = new JPanel();
-
-
 
 
         ugyfelek_bal_lab = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -373,8 +379,6 @@ public class view extends JFrame {
         ugyfelek_jobb_table_gombok.add(ugyfel_ki, gbc2);
 
 
-
-
         ugyfelek_jobb_lab.add(ugyfel_ugyfel_label);
         ugyfelek_jobb.add(ugyfelek_jobb_lab, BorderLayout.PAGE_START);
         ugyfelek_jobb.add(ugyfelek_jobb_table_data, BorderLayout.CENTER);
@@ -391,7 +395,7 @@ public class view extends JFrame {
         ugyfelek.add(ugyfelek_jobb);
     }
 
-    public void packBefizetesek(){
+    public void packBefizetesek() {
 
         befizetesek = new JPanel();
         befizetesek.setLayout(new BorderLayout());
@@ -406,11 +410,11 @@ public class view extends JFrame {
         befizetesek_lista_scroll = new JScrollPane(befizetesek_lista);
         befizetesek_lista_scroll.setSize(new Dimension(250, 80));
 
-        befizetesek.add(befizetesek_lista,BorderLayout.CENTER);
+        befizetesek.add(befizetesek_lista, BorderLayout.CENTER);
 
     }
 
-    public void packHasznalat(){
+    public void packHasznalat() {
         hasznalat = new JPanel();
         hasznalat.setLayout(new BorderLayout());
 
@@ -424,7 +428,32 @@ public class view extends JFrame {
         hasznalat_lista_scroll = new JScrollPane(hasznalat_lista);
         hasznalat_lista_scroll.setSize(new Dimension(250, 80));
 
-        hasznalat.add(hasznalat_lista,BorderLayout.CENTER);
+        hasznalat.add(hasznalat_lista, BorderLayout.CENTER);
+
+    }
+
+    public void packSzamlak() {
+        szamlak = new JPanel();
+        szamlak.setLayout(new GridLayout(1, 3, 5, 5));
+
+        szamlak_lista_model = new DefaultListModel();
+
+        szamlak_lista = new JList(szamlak_lista_model);
+        szamlak_lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        szamlak_lista.setLayoutOrientation(JList.VERTICAL);
+        szamlak_lista.setVisibleRowCount(-1);
+
+        szamlak_lista_scroll = new JScrollPane(szamlak_lista);
+        szamlak_lista_scroll.setSize(new Dimension(250, 80));
+
+        jfxPanel = new JFXPanel();
+
+        //JPanel svP = new JPanel();
+        //svP.add(szamlak_lista);
+
+        szamlak.add(szamlak_lista);
+        //szamlak.add(new JSeparator(JSeparator.VERTICAL));
+        szamlak.add(jfxPanel);
 
     }
 
@@ -604,9 +633,9 @@ public class view extends JFrame {
         ugyfel_pont.setText(Integer.toString(data.pont));
         ugyfel_pont.setEditable(false);
 
-        if(data.status == 1){
-            ugyfel_statusz.setText("Bejelentkezve - "+data.gepid);
-        }else{
+        if (data.status == 1) {
+            ugyfel_statusz.setText("Bejelentkezve - " + data.gepid);
+        } else {
             ugyfel_statusz.setText("Kijelentkezve");
         }
         ugyfel_statusz.setEditable(false);
@@ -661,7 +690,7 @@ public class view extends JFrame {
         if (n == 0) {
             try {
                 ret = Integer.parseInt(osszeg.getText());
-            }catch (NumberFormatException nfe){
+            } catch (NumberFormatException nfe) {
                 nfe.printStackTrace();
                 throw new GuiException("[GUI] Nem számot adott meg!");
             }
@@ -695,11 +724,11 @@ public class view extends JFrame {
 
     }
 
-    public String UgyfelBe(ArrayList<String> gepids){
+    public String UgyfelBe(ArrayList<String> gepids) {
 
         JComboBox<String> combo = new JComboBox<String>();
 
-        for(String gep : gepids){
+        for (String gep : gepids) {
             combo.addItem(gep);
         }
 
@@ -711,15 +740,15 @@ public class view extends JFrame {
 
         JOptionPane.showMessageDialog(null, inside, "Ügyfél beléptetés", JOptionPane.PLAIN_MESSAGE);
 
-        return (String)combo.getSelectedItem();
+        return (String) combo.getSelectedItem();
     }
 
-    public ugyfelArray getCurrentUgyfelData(){
-        return new ugyfelArray(ugyfel_nev.getText(), ugyfel_azon.getText(), ugyfel_cim.getText(), ugyfel_szemszam.getText(), "", 0,0,"",0);
+    public ugyfelArray getCurrentUgyfelData() {
+        return new ugyfelArray(ugyfel_nev.getText(), ugyfel_azon.getText(), ugyfel_cim.getText(), ugyfel_szemszam.getText(), "", 0, 0, "", 0);
     }
 
     // Befizetesek
-    public void updateBefizetesekList(ArrayList<String> list){
+    public void updateBefizetesekList(ArrayList<String> list) {
 
         befizetesek_lista_model.removeAllElements();
 
@@ -731,7 +760,7 @@ public class view extends JFrame {
     }
 
     //Használat
-    public void updateHasznalatList(ArrayList<String> list){
+    public void updateHasznalatList(ArrayList<String> list) {
 
         hasznalat_lista_model.removeAllElements();
 
@@ -742,23 +771,71 @@ public class view extends JFrame {
         hasznalat_lista.updateUI();
     }
 
+    //Számlák
+    public void setSzamlakListChangeListener(final Action act) {
+
+        szamlak_lista.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+
+                if (getCurrentSzamla() != null) {
+                    act.actionPerformed(new ActionEvent(e.getSource(), 1, getCurrentSzamla()));
+                }
+            }
+        });
+
+
+    }
+
+    public String getCurrentSzamla() {
+
+        if (szamlak_lista.getSelectedValue() != null) {
+            return szamlak_lista.getSelectedValue().toString();
+        } else {
+            return null;
+        }
+
+    }
+
+    public void updateSzamlak(ArrayList<String> list) {
+
+        szamlak_lista_model.removeAllElements();
+
+        for (String item : list) {
+            szamlak_lista_model.addElement(item);
+        }
+
+        szamlak_lista.updateUI();
+    }
+
+    public void showSzamla(String html) {
+
+        Platform.runLater(() -> {
+            WebView webView = new WebView();
+            jfxPanel.setScene(new Scene(webView));
+            webView.getEngine().loadContent(html);
+        });
+
+    }
+
+
     // OTHER
 
     /**
 
      Used for error messages.
-        ERROR_MESSAGE = 0;
+     ERROR_MESSAGE = 0;
 
      Used for information messages.
-        INFORMATION_MESSAGE = 1;
+     INFORMATION_MESSAGE = 1;
 
      Used for warning messages.
-        WARNING_MESSAGE = 2;
+     WARNING_MESSAGE = 2;
 
      Used for questions.
-        QUESTION_MESSAGE = 3;
-    */
-    public void Notification(int type, String title, String msg){
+     QUESTION_MESSAGE = 3;
+     */
+    public void Notification(int type, String title, String msg) {
 
         JOptionPane.showMessageDialog(null,
                 msg,

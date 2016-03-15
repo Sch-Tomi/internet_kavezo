@@ -3,6 +3,7 @@ package IkMen.tools;
 import IkMen.exceptions.SzamlaException;
 import IkMen.mysql.helpers.kilepesAdatok;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,8 +24,16 @@ public class szamla {
     public szamla(int price) throws SzamlaException{
         this.PRICE = price;
         try {
-            List<String> lines = Files.readAllLines(Paths.get("src/IkMen/tools/template.html"));
-            TEMPLATE = lines.toString();
+            //TODO filepath...
+            //String path = new File(szamla.class.getResource("szamla.class").toString().split(":")[1]).getParent();
+
+            String path = System.getProperty("user.dir")+"/template.html";
+
+            List<String> lines = Files.readAllLines(Paths.get(path));
+
+            for(String line : lines){
+                TEMPLATE+=line;
+            }
 
         } catch (IOException e) {
             // handle exception

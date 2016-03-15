@@ -1,40 +1,40 @@
 package IkMen.mysql;
 
 /**
- *
  * A program MySql kapcsolatát biztosító osztály.
- *
+ * <p>
  * Created by tom on 2016.03.03..
  */
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Calendar;
 
 import IkMen.exceptions.DataBaseException;
 import IkMen.mysql.helpers.DateUtils;
 import IkMen.mysql.helpers.kilepesAdatok;
 import IkMen.mysql.helpers.ugyfelArray;
 
-import javax.xml.crypto.Data;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 public class model {
 
     // JDBC driver name and database URL
-    private static final String DB_URL = "jdbc:mysql://192.168.1.102:3306/ikmen";
+    private String DB_URL;
 
     //  Database credentials
-    private static final String USER = "test";
-    private static final String PASS = "qwe";
+    private String USER;
+    private String PASS;
 
     private Connection conn;
     private Statement stmt;
 
     private int PRICE;
 
-    public model(int price) throws DataBaseException{
+    public model(int price, String DB_URL, String USER, String PASS) throws DataBaseException {
 
         PRICE = price;
+        this.DB_URL= DB_URL;
+        this.USER = USER;
+        this.PASS = PASS;
 
         conn = null;
         stmt = null;
@@ -42,7 +42,7 @@ public class model {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-           throw new DataBaseException("[DB] Hiányzó MySql Driver");
+            throw new DataBaseException("[DB] Hiányzó MySql Driver");
         }
 
         try {
@@ -63,7 +63,7 @@ public class model {
 
     public ArrayList<String> getGepekIDs() throws DataBaseException {
 
-        ArrayList<String> retArr = new ArrayList<String>();
+        ArrayList<String> retArr = new ArrayList<>();
 
         try {
             stmt = conn.createStatement();
@@ -89,7 +89,7 @@ public class model {
 
     public ArrayList<String> getUresGepekIDs() throws DataBaseException {
 
-        ArrayList<String> retArr = new ArrayList<String>();
+        ArrayList<String> retArr = new ArrayList<>();
 
         try {
             stmt = conn.createStatement();
@@ -114,7 +114,7 @@ public class model {
 
     public ArrayList<String> getGep(String azon) throws DataBaseException {
 
-        ArrayList<String> retArr = new ArrayList<String>();
+        ArrayList<String> retArr = new ArrayList<>();
 
         try {
             stmt = conn.createStatement();
@@ -143,6 +143,7 @@ public class model {
     public void creatNewGep(String id, String text) throws DataBaseException {
 
         try {
+            stmt = conn.createStatement();
             String sql = "INSERT INTO gepek VALUES ('" + id + "', '" + text + "', 0)";
             stmt.executeUpdate(sql);
 
@@ -155,11 +156,21 @@ public class model {
 
     }
 
-    public void deleteGep(String azon) throws DataBaseException{
+    public void deleteGep(String azon) throws DataBaseException {
 
         try {
-            String sql = "DELETE FROM gepek WHERE id = '" + azon + "'";
+            stmt = conn.createStatement();
+            String sql ="SELECT * FROM gepek WHERE id = '"+azon+"'";
+            ResultSet rs = stmt.executeQuery(sql);
+            rs.first();
+
+            if(rs.getInt("status") == 1){
+                throw new DataBaseException("[SQL] Nem lehet törölni a gépet mert épp használatban van!");
+            }
+
+            sql = "DELETE FROM gepek WHERE id = '" + azon + "'";
             stmt.executeUpdate(sql);
+
 
         } catch (SQLException se) {
             //Handle errors for JDBC
@@ -169,7 +180,7 @@ public class model {
 
     }
 
-    public void setGepLeiras(String id, String text) throws DataBaseException{
+    public void setGepLeiras(String id, String text) throws DataBaseException {
 
         try {
             stmt = conn.createStatement();
@@ -185,7 +196,7 @@ public class model {
 
     }
 
-    public void setGepAvaliable(String id) throws DataBaseException{
+    public void setGepAvaliable(String id) throws DataBaseException {
 
         try {
             stmt = conn.createStatement();
@@ -201,7 +212,7 @@ public class model {
 
     }
 
-    public void setGepUnAvaliable(String id) throws DataBaseException{
+    public void setGepUnAvaliable(String id) throws DataBaseException {
 
         try {
             stmt = conn.createStatement();
@@ -221,9 +232,10 @@ public class model {
 
     // Ugyfelek --->
 
-    public void deleteUgyfel(String azon) throws DataBaseException{
+    public void deleteUgyfel(String azon) throws DataBaseException {
 
         try {
+            stmt = conn.createStatement();
             String sql = "DELETE FROM ugyfelek WHERE azon = '" + azon + "'";
             stmt.executeUpdate(sql);
 
@@ -238,7 +250,7 @@ public class model {
 
     public ArrayList<String> getUgyfelekList() throws DataBaseException {
 
-        ArrayList<String> retArr = new ArrayList<String>();
+        ArrayList<String> retArr = new ArrayList<>();
 
         try {
             stmt = conn.createStatement();
@@ -251,7 +263,7 @@ public class model {
             }
 
 
-        } catch (SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
             throw new DataBaseException("[SQL] Nem sikerült megkapni az ügyfél listát.");
@@ -261,7 +273,7 @@ public class model {
         return retArr;
     }
 
-    public ugyfelArray getUgyfel(String KerAzon) throws DataBaseException{
+    public ugyfelArray getUgyfel(String KerAzon) throws DataBaseException {
 
         String nev;
         String azon;
@@ -302,18 +314,17 @@ public class model {
         }
 
 
-
     }
 
-    public void setUgyfel(ugyfelArray ugyfel) throws DataBaseException{
+    public void setUgyfel(ugyfelArray ugyfel) throws DataBaseException {
 
         try {
             stmt = conn.createStatement();
             String sql;
             sql = "UPDATE ugyfelek SET " +
-                    " nev = '" + ugyfel.nev + "', "+
-                    " cim = '" + ugyfel.cim + "', "+
-                    " szemSzam = '" + ugyfel.szemSzam + "'"+
+                    " nev = '" + ugyfel.nev + "', " +
+                    " cim = '" + ugyfel.cim + "', " +
+                    " szemSzam = '" + ugyfel.szemSzam + "'" +
                     " WHERE azon = '" + ugyfel.azon + "'";
             stmt.executeUpdate(sql);
 
@@ -325,7 +336,7 @@ public class model {
 
     }
 
-    public void createUgyfel(ugyfelArray ugyfel) throws DataBaseException{
+    public void createUgyfel(ugyfelArray ugyfel) throws DataBaseException {
 
         try {
             stmt = conn.createStatement();
@@ -351,13 +362,13 @@ public class model {
 
     }
 
-    public void setEgyenleg(String azon, int money) throws DataBaseException{
+    public void setEgyenleg(String azon, int money) throws DataBaseException {
 
         try {
             stmt = conn.createStatement();
             String sql;
 
-            sql = "SELECT egyenleg FROM ugyfelek WHERE azon = '" + azon +"'";
+            sql = "SELECT egyenleg FROM ugyfelek WHERE azon = '" + azon + "'";
             ResultSet rs = stmt.executeQuery(sql);
             rs.first();
 
@@ -366,7 +377,7 @@ public class model {
             int newMoney = current + money;
 
             sql = "UPDATE ugyfelek SET " +
-                    " egyenleg = '" + Integer.toString(newMoney) + "'"+
+                    " egyenleg = '" + Integer.toString(newMoney) + "'" +
                     " WHERE azon = '" + azon + "'";
             stmt.executeUpdate(sql);
 
@@ -378,21 +389,21 @@ public class model {
 
 
         // Ha befizetés történt és nem használat utána levonás akkor logolunk
-        if(money > 0){
+        if (money > 0) {
             setEgyenlegLog(azon, money);
         }
 
 
     }
 
-    public void setEgyenlegLog(String azon, int money) throws DataBaseException{
+    public void setEgyenlegLog(String azon, int money) throws DataBaseException {
 
         try {
             stmt = conn.createStatement();
 
             String sql = "INSERT INTO befizetesek VALUES( " +
-                    "'"+azon+"',"+
-                    "'"+Integer.toString(money)+"')";
+                    "'" + azon + "'," +
+                    "'" + Integer.toString(money) + "')";
 
             stmt.executeUpdate(sql);
 
@@ -404,15 +415,15 @@ public class model {
 
     }
 
-    public void ugyfelBe(String ugyfel, String gepid) throws DataBaseException{
+    public void ugyfelBe(String ugyfel, String gepid) throws DataBaseException {
         try {
             stmt = conn.createStatement();
             String sql;
             sql = "UPDATE ugyfelek SET " +
                     " status = '1'," +
-                    " gepid = '" + gepid + "',"+
+                    " gepid = '" + gepid + "'," +
                     " beido = '" + new Timestamp(new java.util.Date().getTime()).toString() + "'" +
-                    " WHERE azon = '" + ugyfel+"'";
+                    " WHERE azon = '" + ugyfel + "'";
             stmt.executeUpdate(sql);
 
             setGepUnAvaliable(gepid);
@@ -424,20 +435,20 @@ public class model {
         }
     }
 
-    public void ugyfelKi(kilepesAdatok data) throws DataBaseException{
+    public void ugyfelKi(kilepesAdatok data) throws DataBaseException {
         try {
             stmt = conn.createStatement();
             String sql;
             sql = "UPDATE ugyfelek SET " +
                     " status = '0'," +
-                    " gepid = '-1',"+
+                    " gepid = '-1'," +
                     " beido = '-'," +
-                    " pont = '"+Integer.toString(data.pont)+"'"+
-                    " WHERE azon = '" + data.azon +"'";
+                    " pont = '" + Integer.toString(data.pont) + "'" +
+                    " WHERE azon = '" + data.azon + "'";
             stmt.executeUpdate(sql);
 
             setGepAvaliable(data.gepid);
-            setUgyfelKiLog(data.azon,data.gepid, data.beido, new Timestamp(new java.util.Date().getTime()).toString());
+            setUgyfelKiLog(data.azon, data.gepid, data.beido, new Timestamp(new java.util.Date().getTime()).toString());
 
         } catch (SQLException se) {
             //Handle errors for JDBC
@@ -446,17 +457,17 @@ public class model {
         }
     }
 
-    public void setUgyfelKiLog(String azon, String gepid, String be, String ki){
+    public void setUgyfelKiLog(String azon, String gepid, String be, String ki) {
 
         try {
             stmt = conn.createStatement();
 
-            String sql = "INSERT INTO hasznalat VALUES('"+azon+"','"+gepid+"','"+be+"','"+ki+"' )";
+            String sql = "INSERT INTO hasznalat VALUES('" + azon + "','" + gepid + "','" + be + "','" + ki + "' )";
 
             System.out.println(sql);
             stmt.executeUpdate(sql);
 
-        }catch (SQLException se){
+        } catch (SQLException se) {
             se.printStackTrace();
             throw new DataBaseException("[SQL] Nem sikerült használati logot készíteni.");
         }
@@ -464,7 +475,7 @@ public class model {
 
     }
 
-    public kilepesAdatok getUgyfelKiAdat(String KerAzon) throws DataBaseException{
+    public kilepesAdatok getUgyfelKiAdat(String KerAzon) throws DataBaseException {
         String nev;
         String azon;
         String cim;
@@ -494,18 +505,19 @@ public class model {
             egyenleg = rs.getInt("egyenleg");
             gepid = rs.getString("gepid");
             pont = rs.getInt("pont");
-            pont += calcPont(beido,new Timestamp(new java.util.Date().getTime()).toString());
+            pont += calcPont(beido, new Timestamp(new java.util.Date().getTime()).toString());
 
             // Calc
-            long now= System.currentTimeMillis()/1000;
+            long now = System.currentTimeMillis() / 1000;
             Timestamp timestamp = Timestamp.valueOf(beido);
-            long beidoSec = timestamp.getTime()/1000;
+            long beidoSec = timestamp.getTime() / 1000;
 
-            double hours = (now - beidoSec)/3600.0;
+            double hours = (now - beidoSec) / 3600.0;
 
-            int fizetendo = (int)(hours * PRICE);
+            int fizetendo = (int) (hours * PRICE);
+            fizetendo = calcReduce(fizetendo,pont);
 
-            return new kilepesAdatok(nev, azon, cim, szemSzam, beido, status, egyenleg, gepid, pont, new Timestamp(new java.util.Date().getTime()).toString(),fizetendo, hours);
+            return new kilepesAdatok(nev, azon, cim, szemSzam, beido, status, egyenleg, gepid, pont, new Timestamp(new java.util.Date().getTime()).toString(), fizetendo, hours);
 
         } catch (SQLException se) {
             //Handle errors for JDBC
@@ -515,23 +527,30 @@ public class model {
 
     }
 
+    public int calcReduce(int money, int pont){
+
+        double reduce = ((pont/150)*0.01 > 0.015) ? 0.015 : (pont/150)*0.01;
+
+        return (int)(money*reduce);
+    }
+
     public int calcPont(String be, String ki) {
 
         int pont = 0;
 
         Timestamp timestamp = Timestamp.valueOf(be);
-        java.util.Date beIdo = new Date( timestamp.getTime());
+        java.util.Date beIdo = new Date(timestamp.getTime());
 
         timestamp = Timestamp.valueOf(ki);
-        java.util.Date kiIdo = new Date( timestamp.getTime());
+        java.util.Date kiIdo = new Date(timestamp.getTime());
 
         java.util.Date calcTime = beIdo;
 
         Calendar cal = Calendar.getInstance();
 
-        while(calcTime.before(kiIdo)){
+        while (calcTime.before(kiIdo)) {
 
-            java.util.Date begin =calcTime;
+            java.util.Date begin = calcTime;
             java.util.Date end = DateUtils.addHours(calcTime, 1);
 
             cal.setTime(begin);
@@ -540,16 +559,15 @@ public class model {
             cal.setTime(end);
             int hourKI = cal.get(Calendar.HOUR_OF_DAY);
 
-            if((hourBE >= 16 && hourBE < 21) || (hourKI >= 16 && hourKI < 21)){
+            if ((hourBE >= 16 && hourBE < 21) || (hourKI >= 16 && hourKI < 21)) {
                 pont++;
-            }else {
+            } else {
                 pont += 2;
             }
 
 
             calcTime = DateUtils.addHours(calcTime, 1);
         }
-
 
 
         return pont;
@@ -560,9 +578,9 @@ public class model {
 
     // Befizetesek
 
-    public ArrayList<String> getBefizetesekList(){
+    public ArrayList<String> getBefizetesekList() {
 
-        ArrayList<String> retArr = new ArrayList<String>();
+        ArrayList<String> retArr = new ArrayList<>();
 
         try {
             stmt = conn.createStatement();
@@ -571,11 +589,11 @@ public class model {
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                retArr.add(rs.getString("azon")+" : "+rs.getString("osszeg"));
+                retArr.add(rs.getString("azon") + " : " + rs.getString("osszeg"));
             }
 
 
-        } catch (SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
             throw new DataBaseException("[SQL] Nem sikerült megkapni a befizetesek listát.");
@@ -588,9 +606,9 @@ public class model {
     }
 
     //Használat
-    public ArrayList<String> getHasznalatList(){
+    public ArrayList<String> getHasznalatList() {
 
-        ArrayList<String> retArr = new ArrayList<String>();
+        ArrayList<String> retArr = new ArrayList<>();
 
         try {
             stmt = conn.createStatement();
@@ -599,11 +617,11 @@ public class model {
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                retArr.add(rs.getString("azon")+" : "+rs.getString("gepid")+"      "+rs.getString("be")+" - "+rs.getString("ki"));
+                retArr.add(rs.getString("azon") + " : " + rs.getString("gepid") + "      " + rs.getString("be") + " - " + rs.getString("ki"));
             }
 
 
-        } catch (SQLException se){
+        } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
             throw new DataBaseException("[SQL] Nem sikerült megkapni a használat listát.");
