@@ -1,9 +1,8 @@
 package IkMen.tools;
 
 import IkMen.exceptions.SzamlaException;
-import IkMen.mysql.helpers.kilepesAdatok;
+import IkMen.mysql.helpers.KilepesAdatok;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,23 +15,24 @@ import java.util.List;
  *
  * Created by tom on 2016.03.12..
  */
-public class szamla {
+public class Szamla {
 
     private String TEMPLATE;
     private int PRICE;
 
-    public szamla(int price) throws SzamlaException{
+    public Szamla(int price) throws SzamlaException{
         this.PRICE = price;
         try {
-            //TODO filepath...
-            //String path = new File(szamla.class.getResource("szamla.class").toString().split(":")[1]).getParent();
+            
 
-            String path = System.getProperty("user.dir")+"/template.html";
+            String path = System.getProperty("user.dir")+"/cfg/template.html";
 
             List<String> lines = Files.readAllLines(Paths.get(path));
 
             for(String line : lines){
-                TEMPLATE+=line;
+                if(line !=null) {
+                    TEMPLATE += line;
+                }
             }
 
         } catch (IOException e) {
@@ -42,9 +42,12 @@ public class szamla {
         }
     }
 
-    public void create_szamla(kilepesAdatok data) {
+    public void create_szamla(KilepesAdatok data) {
 
         String file = TEMPLATE;
+
+        System.out.println(data);
+
 
         file = file.replace("%NEVE%", data.nev);
         file = file.replace("%CIME%", data.cim);
@@ -56,6 +59,7 @@ public class szamla {
         file = file.replace("%AFA_FT%", Integer.toString((int) (data.fizetendo * 0.27)));
         file = file.replace("%BRUTTO_FT%", Integer.toString((int) (data.fizetendo * 0.27) + data.fizetendo));
         file = file.replace(", ","\n");
+        file = file.replace("null","");
 
 
         try {

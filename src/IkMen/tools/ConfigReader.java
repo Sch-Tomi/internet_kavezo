@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by tom on 2016.03.14..
  */
-public class configReader {
+public class ConfigReader {
 
 
 
@@ -19,12 +19,10 @@ public class configReader {
     private String DB_USER;
     private String DB_PASS;
 
-    public configReader() throws ConfigException{
+    public ConfigReader() throws ConfigException{
         try {
 
-            //TODO filepath...
-
-            String path = System.getProperty("user.dir")+"/config.txt";
+            String path = System.getProperty("user.dir")+"/cfg/config.txt";
             List<String> lines = Files.readAllLines(Paths.get(path));
 
             for(String line : lines){

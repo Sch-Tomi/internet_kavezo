@@ -8,14 +8,14 @@ package IkMen.mysql;
 
 import IkMen.exceptions.DataBaseException;
 import IkMen.mysql.helpers.DateUtils;
-import IkMen.mysql.helpers.kilepesAdatok;
-import IkMen.mysql.helpers.ugyfelArray;
+import IkMen.mysql.helpers.KilepesAdatok;
+import IkMen.mysql.helpers.UgyfelArray;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class model {
+public class Model {
 
     // JDBC driver name and database URL
     private String DB_URL;
@@ -29,7 +29,7 @@ public class model {
 
     private int PRICE;
 
-    public model(int price, String DB_URL, String USER, String PASS) throws DataBaseException {
+    public Model(int price, String DB_URL, String USER, String PASS) throws DataBaseException {
 
         PRICE = price;
         this.DB_URL= DB_URL;
@@ -273,7 +273,7 @@ public class model {
         return retArr;
     }
 
-    public ugyfelArray getUgyfel(String KerAzon) throws DataBaseException {
+    public UgyfelArray getUgyfel(String KerAzon) throws DataBaseException {
 
         String nev;
         String azon;
@@ -305,7 +305,7 @@ public class model {
             gepid = rs.getString("gepid");
             pont = rs.getInt("pont");
 
-            return new ugyfelArray(nev, azon, cim, szemSzam, beido, status, egyenleg, gepid, pont);
+            return new UgyfelArray(nev, azon, cim, szemSzam, beido, status, egyenleg, gepid, pont);
 
         } catch (SQLException se) {
             //Handle errors for JDBC
@@ -316,7 +316,7 @@ public class model {
 
     }
 
-    public void setUgyfel(ugyfelArray ugyfel) throws DataBaseException {
+    public void setUgyfel(UgyfelArray ugyfel) throws DataBaseException {
 
         try {
             stmt = conn.createStatement();
@@ -336,7 +336,7 @@ public class model {
 
     }
 
-    public void createUgyfel(ugyfelArray ugyfel) throws DataBaseException {
+    public void createUgyfel(UgyfelArray ugyfel) throws DataBaseException {
 
         try {
             stmt = conn.createStatement();
@@ -435,7 +435,7 @@ public class model {
         }
     }
 
-    public void ugyfelKi(kilepesAdatok data) throws DataBaseException {
+    public void ugyfelKi(KilepesAdatok data) throws DataBaseException {
         try {
             stmt = conn.createStatement();
             String sql;
@@ -475,7 +475,7 @@ public class model {
 
     }
 
-    public kilepesAdatok getUgyfelKiAdat(String KerAzon) throws DataBaseException {
+    public KilepesAdatok getUgyfelKiAdat(String KerAzon) throws DataBaseException {
         String nev;
         String azon;
         String cim;
@@ -517,7 +517,7 @@ public class model {
             int fizetendo = (int) (hours * PRICE);
             fizetendo = calcReduce(fizetendo,pont);
 
-            return new kilepesAdatok(nev, azon, cim, szemSzam, beido, status, egyenleg, gepid, pont, new Timestamp(new java.util.Date().getTime()).toString(), fizetendo, hours);
+            return new KilepesAdatok(nev, azon, cim, szemSzam, beido, status, egyenleg, gepid, pont, new Timestamp(new java.util.Date().getTime()).toString(), fizetendo, hours);
 
         } catch (SQLException se) {
             //Handle errors for JDBC
@@ -546,7 +546,12 @@ public class model {
 
         java.util.Date calcTime = beIdo;
 
+        // TODO rossz a számolás, ezzel talán jó...
+        calcTime = DateUtils.addHours(calcTime, 1);
+
+
         Calendar cal = Calendar.getInstance();
+
 
         while (calcTime.before(kiIdo)) {
 
@@ -578,9 +583,9 @@ public class model {
 
     // Befizetesek
 
-    public ArrayList<String> getBefizetesekList() {
+    public ArrayList<ArrayList<String>> getBefizetesekList() {
 
-        ArrayList<String> retArr = new ArrayList<>();
+        ArrayList<ArrayList<String>> retArr = new ArrayList<>();
 
         try {
             stmt = conn.createStatement();
@@ -589,7 +594,10 @@ public class model {
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                retArr.add(rs.getString("azon") + " : " + rs.getString("osszeg"));
+                ArrayList<String> temp= new ArrayList<>();
+                temp.add(rs.getString("azon"));
+                temp.add(rs.getString("osszeg"));
+                retArr.add(temp);
             }
 
 
@@ -606,9 +614,9 @@ public class model {
     }
 
     //Használat
-    public ArrayList<String> getHasznalatList() {
+    public ArrayList<ArrayList<String>> getHasznalatList() {
 
-        ArrayList<String> retArr = new ArrayList<>();
+        ArrayList<ArrayList<String>> retArr = new ArrayList<>();
 
         try {
             stmt = conn.createStatement();
@@ -617,7 +625,14 @@ public class model {
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                retArr.add(rs.getString("azon") + " : " + rs.getString("gepid") + "      " + rs.getString("be") + " - " + rs.getString("ki"));
+                ArrayList<String> temp = new ArrayList<>();
+                temp.add(rs.getString("azon"));
+                temp.add(rs.getString("gepid"));
+                temp.add(rs.getString("be"));
+                temp.add(rs.getString("ki"));
+
+                retArr.add(temp);
+
             }
 
 

@@ -14,12 +14,12 @@ import java.util.*;
  *
  * Created by tom on 2016.03.14..
  */
-public class szamlak {
+public class Szamlak {
 
     private Map<String, String> dict;
     private ArrayList<String> kulcsok;
 
-    public szamlak() throws SzamlakException{
+    public Szamlak() throws SzamlakException{
         try {
             dict = new HashMap<>();
             kulcsok = new ArrayList<>();

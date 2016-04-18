@@ -7,7 +7,7 @@ package IkMen.gui;
  */
 
 import IkMen.exceptions.GuiException;
-import IkMen.mysql.helpers.ugyfelArray;
+import IkMen.mysql.helpers.UgyfelArray;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
@@ -19,6 +19,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.DimensionUIResource;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +27,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
-public class view extends JFrame {
+public class View extends JFrame {
 
     private JPanel mainPanel;
     private JPanel gepek;
@@ -80,14 +81,14 @@ public class view extends JFrame {
     private JTextField ugyfel_pont;
 
     private JPanel befizetesek;
-    private JList befizetesek_lista;
-    private JScrollPane befizetesek_lista_scroll;
-    private DefaultListModel befizetesek_lista_model;
+    private JTable befizetesek_table;
+    private JScrollPane befizetesek_table_scroll;
+    private DefaultTableModel befizetesek_table_model;
 
     private JPanel hasznalat;
-    private JList hasznalat_lista;
-    private JScrollPane hasznalat_lista_scroll;
-    private DefaultListModel hasznalat_lista_model;
+    private JTable hasznalat_table;
+    private JScrollPane hasznalat_table_scroll;
+    private DefaultTableModel hasznalat_table_model;
 
     private JPanel szamlak;
     private JList szamlak_lista;
@@ -96,7 +97,7 @@ public class view extends JFrame {
     private JFXPanel jfxPanel;
 
 
-    public view(Action buttonAct, ArrayList<Integer> buttonCmds, Action tabAct, Action comboAct, Action ugyfelekListaAct, Action szamlakListaAct) {
+    public View(Action buttonAct, ArrayList<Integer> buttonCmds, Action tabAct, Action comboAct, Action ugyfelekListaAct, Action szamlakListaAct) {
 
         //Set Lookout
         try {
@@ -150,6 +151,10 @@ public class view extends JFrame {
         setTitle("Internet Kávézó Menedzser");
         setSize(new Dimension(640, 480));
         setLocationRelativeTo(null); // középre nyíljon meg
+
+        String path = System.getProperty("user.dir")+"/cfg/services_coffee.png";
+        ImageIcon img = new ImageIcon(path);
+        setIconImage(img.getImage());
 
     }
 
@@ -397,38 +402,48 @@ public class view extends JFrame {
 
     public void packBefizetesek() {
 
+        Object[][] data = {};
+        String[] columnNames = {"Ügyfél azonosító", "Befizetett összeg"};
+        befizetesek_table_model = new DefaultTableModel(data, columnNames)  {
+            public boolean isCellEditable(int row, int column)
+            {
+                return false;//This causes all cells to be not editable
+            }
+        };
+
+
+        befizetesek_table = new JTable(befizetesek_table_model) ;
+        befizetesek_table_scroll = new JScrollPane(befizetesek_table);
+        befizetesek_table.setFillsViewportHeight(true);
+
         befizetesek = new JPanel();
         befizetesek.setLayout(new BorderLayout());
-
-        befizetesek_lista_model = new DefaultListModel();
-
-        befizetesek_lista = new JList(befizetesek_lista_model);
-        befizetesek_lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        befizetesek_lista.setLayoutOrientation(JList.VERTICAL);
-        befizetesek_lista.setVisibleRowCount(-1);
-
-        befizetesek_lista_scroll = new JScrollPane(befizetesek_lista);
-        befizetesek_lista_scroll.setSize(new Dimension(250, 80));
-
-        befizetesek.add(befizetesek_lista, BorderLayout.CENTER);
+        befizetesek.add(befizetesek_table.getTableHeader(), BorderLayout.PAGE_START);
+        befizetesek.add(befizetesek_table, BorderLayout.CENTER);
 
     }
 
     public void packHasznalat() {
+
+        Object[][] data = {};
+        String[] columnNames = {"Ügyfél azonosító", "Számítógép azonosító", "Bejelentkezés időpontja", "Kijelentkezés időpontja"};
+        hasznalat_table_model = new DefaultTableModel(data, columnNames)  {
+            public boolean isCellEditable(int row, int column)
+            {
+                return false;//This causes all cells to be not editable
+            }
+        };
+
+
+        hasznalat_table = new JTable(hasznalat_table_model) ;
+        hasznalat_table_scroll = new JScrollPane(hasznalat_table);
+        hasznalat_table.setFillsViewportHeight(true);
+
         hasznalat = new JPanel();
         hasznalat.setLayout(new BorderLayout());
+        hasznalat.add(hasznalat_table.getTableHeader(), BorderLayout.PAGE_START);
+        hasznalat.add(hasznalat_table, BorderLayout.CENTER);
 
-        hasznalat_lista_model = new DefaultListModel();
-
-        hasznalat_lista = new JList(hasznalat_lista_model);
-        hasznalat_lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        hasznalat_lista.setLayoutOrientation(JList.VERTICAL);
-        hasznalat_lista.setVisibleRowCount(-1);
-
-        hasznalat_lista_scroll = new JScrollPane(hasznalat_lista);
-        hasznalat_lista_scroll.setSize(new Dimension(250, 80));
-
-        hasznalat.add(hasznalat_lista, BorderLayout.CENTER);
 
     }
 
@@ -452,7 +467,7 @@ public class view extends JFrame {
         //svP.add(szamlak_lista);
 
         szamlak.add(szamlak_lista);
-        //szamlak.add(new JSeparator(JSeparator.VERTICAL));
+        //Szamlak.add(new JSeparator(JSeparator.VERTICAL));
         szamlak.add(jfxPanel);
 
     }
@@ -621,7 +636,7 @@ public class view extends JFrame {
 
     }
 
-    public void updateUgyfelDatas(ugyfelArray data) {
+    public void updateUgyfelDatas(UgyfelArray data) {
 
         ugyfel_nev.setText(data.nev);
         ugyfel_cim.setText(data.cim);
@@ -699,7 +714,7 @@ public class view extends JFrame {
         return ret;
     }
 
-    public ugyfelArray newUser() {
+    public UgyfelArray newUser() {
 
         JTextField nev = new JTextField();
         JTextField cim = new JTextField();
@@ -720,7 +735,7 @@ public class view extends JFrame {
 
         JOptionPane.showMessageDialog(null, inside, "Új ügyfél", JOptionPane.PLAIN_MESSAGE);
 
-        return new ugyfelArray(nev.getText(), azon.getText(), cim.getText(), szemszam.getText(), "", 0, 0, "", 0);
+        return new UgyfelArray(nev.getText(), azon.getText(), cim.getText(), szemszam.getText(), "", 0, 0, "", 0);
 
     }
 
@@ -743,32 +758,33 @@ public class view extends JFrame {
         return (String) combo.getSelectedItem();
     }
 
-    public ugyfelArray getCurrentUgyfelData() {
-        return new ugyfelArray(ugyfel_nev.getText(), ugyfel_azon.getText(), ugyfel_cim.getText(), ugyfel_szemszam.getText(), "", 0, 0, "", 0);
+    public UgyfelArray getCurrentUgyfelData() {
+        return new UgyfelArray(ugyfel_nev.getText(), ugyfel_azon.getText(), ugyfel_cim.getText(), ugyfel_szemszam.getText(), "", 0, 0, "", 0);
     }
 
     // Befizetesek
-    public void updateBefizetesekList(ArrayList<String> list) {
+    public void updateBefizetesekList(ArrayList<ArrayList<String>> list) {
 
-        befizetesek_lista_model.removeAllElements();
+        befizetesek_table_model.setRowCount(0);
 
-        for (String ListItem : list) {
-            befizetesek_lista_model.addElement(ListItem);
+        for(ArrayList<String> arr : list){
+            befizetesek_table_model.addRow(arr.toArray());
         }
 
-        befizetesek_lista.updateUI();
+        befizetesek_table.updateUI();
     }
 
     //Használat
-    public void updateHasznalatList(ArrayList<String> list) {
+    public void updateHasznalatList(ArrayList<ArrayList<String>> list) {
 
-        hasznalat_lista_model.removeAllElements();
+        hasznalat_table_model.setRowCount(0);
 
-        for (String ListItem : list) {
-            hasznalat_lista_model.addElement(ListItem);
+        for(ArrayList<String> arr : list){
+            hasznalat_table_model.addRow(arr.toArray());
         }
 
-        hasznalat_lista.updateUI();
+        hasznalat_table.updateUI();
+
     }
 
     //Számlák

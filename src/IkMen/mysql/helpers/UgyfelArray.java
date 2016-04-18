@@ -6,7 +6,7 @@ package IkMen.mysql.helpers;
  *
  * Created by tom
  */
-public class ugyfelArray {
+public class UgyfelArray {
 
     public String nev;
     public String azon;
@@ -19,7 +19,7 @@ public class ugyfelArray {
     public String gepid;
     public int pont;
 
-    public ugyfelArray(String nev, String azon, String cim, String szemSzam, String beido, int status, int egyenleg, String gepid, int pont){
+    public UgyfelArray(String nev, String azon, String cim, String szemSzam, String beido, int status, int egyenleg, String gepid, int pont){
 
         this.nev = nev;
         this.azon = azon;

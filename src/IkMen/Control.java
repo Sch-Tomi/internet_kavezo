@@ -9,26 +9,25 @@ package IkMen;
 
 
 import IkMen.exceptions.*;
-import IkMen.gui.view;
-import IkMen.mysql.helpers.kilepesAdatok;
-import IkMen.mysql.helpers.ugyfelArray;
-import IkMen.mysql.model;
-import IkMen.tools.configReader;
-import IkMen.tools.szamla;
-import IkMen.tools.szamlak;
+import IkMen.gui.View;
+import IkMen.mysql.helpers.KilepesAdatok;
+import IkMen.mysql.helpers.UgyfelArray;
+import IkMen.mysql.Model;
+import IkMen.tools.ConfigReader;
+import IkMen.tools.Szamla;
+import IkMen.tools.Szamlak;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 
-public class controll {
+public class Control {
 
-    private view gui;
-    private model db;
-    private szamla szamla;
-    private szamlak szamlak;
-    private configReader config;
+    private View gui;
+    private Model db;
+    private Szamla szamla;
+    private Szamlak szamlak;
+    private ConfigReader config;
 
     private final Action tabAction = new AbstractAction() {
         @Override
@@ -47,10 +46,10 @@ public class controll {
                         case 2: // befizetesek
                             gui.updateBefizetesekList(db.getBefizetesekList());
                             break;
-                        case 3:
+                        case 3: // használat
                             gui.updateHasznalatList(db.getHasznalatList());
                             break;
-                        case 4:
+                        case 4: // Számlák
                             gui.updateSzamlak(szamlak.getList());
                             break;
                     }
@@ -114,7 +113,7 @@ public class controll {
 
                     case 6: //"ugyfel_ki":
 
-                        kilepesAdatok data = db.getUgyfelKiAdat(gui.getCurrentUgyfel());
+                        KilepesAdatok data = db.getUgyfelKiAdat(gui.getCurrentUgyfel());
 
                         if(data.fizetendo <= data.egyenleg){
                             db.setEgyenleg(data.azon,-data.fizetendo);
@@ -135,7 +134,7 @@ public class controll {
                         break;
 
                     case 8:
-                        ugyfelArray delData =db.getUgyfel(gui.getCurrentUgyfel());
+                        UgyfelArray delData =db.getUgyfel(gui.getCurrentUgyfel());
 
                         if(delData.status == 0){
                             db.deleteUgyfel(gui.getCurrentUgyfel());
@@ -149,8 +148,8 @@ public class controll {
                         break;
 
                     case 9:
-                        ugyfelArray oldData = db.getUgyfel(gui.getCurrentUgyfel());
-                        ugyfelArray currentData = gui.getCurrentUgyfelData();
+                        UgyfelArray oldData = db.getUgyfel(gui.getCurrentUgyfel());
+                        UgyfelArray currentData = gui.getCurrentUgyfelData();
 
                         oldData.nev = currentData.nev;
                         oldData.cim = currentData.cim;
@@ -205,7 +204,7 @@ public class controll {
     };
 
 
-    public controll(){
+    public Control(){
 
         int price;
 
@@ -213,10 +212,10 @@ public class controll {
 
         try {
 
-            config = new configReader();
-            db = new model(config.getPRICE(), config.getDB_URL(), config.getDB_USER(), config.getDB_PASS());
-            szamla = new szamla(config.getPRICE());
-            szamlak = new szamlak();
+            config = new ConfigReader();
+            db = new Model(config.getPRICE(), config.getDB_URL(), config.getDB_USER(), config.getDB_PASS());
+            szamla = new Szamla(config.getPRICE());
+            szamlak = new Szamlak();
 
         }catch (DataBaseException dbe){
             errors.add(dbe);
@@ -243,7 +242,7 @@ public class controll {
 
 
 
-        gui = new view(controllAction, guiButtons, tabAction, comboAction, ugyfelekListaAction, szamlakListaAction);
+        gui = new View(controllAction, guiButtons, tabAction, comboAction, ugyfelekListaAction, szamlakListaAction);
         gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         gui.setVisible(true);
 
