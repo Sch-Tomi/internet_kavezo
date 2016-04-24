@@ -20,12 +20,12 @@ public class Szamla {
     private String TEMPLATE;
     private int PRICE;
 
-    public Szamla(int price) throws SzamlaException{
+    public Szamla(int price, String pathTemplate) throws SzamlaException{
         this.PRICE = price;
         try {
             
 
-            String path = System.getProperty("user.dir")+"/cfg/template.html";
+            String path = pathTemplate;
 
             List<String> lines = Files.readAllLines(Paths.get(path));
 

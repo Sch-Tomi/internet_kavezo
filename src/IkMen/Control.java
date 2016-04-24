@@ -212,9 +212,9 @@ public class Control {
 
         try {
 
-            config = new ConfigReader();
+            config = new ConfigReader(System.getProperty("user.dir")+"/cfg/config.txt");
             db = new Model(config.getPRICE(), config.getDB_URL(), config.getDB_USER(), config.getDB_PASS());
-            szamla = new Szamla(config.getPRICE());
+            szamla = new Szamla(config.getPRICE(),System.getProperty("user.dir")+"/cfg/template.html");
             szamlak = new Szamlak();
 
         }catch (DataBaseException dbe){

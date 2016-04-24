@@ -19,10 +19,10 @@ public class ConfigReader {
     private String DB_USER;
     private String DB_PASS;
 
-    public ConfigReader() throws ConfigException{
+    public ConfigReader(String cfgPath) throws ConfigException{
         try {
 
-            String path = System.getProperty("user.dir")+"/cfg/config.txt";
+            String path = cfgPath ;
             List<String> lines = Files.readAllLines(Paths.get(path));
 
             for(String line : lines){
