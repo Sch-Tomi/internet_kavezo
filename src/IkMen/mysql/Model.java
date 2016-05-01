@@ -494,7 +494,6 @@ public class Model {
 
             String sql = "INSERT INTO hasznalat VALUES('" + azon + "','" + gepid + "','" + be + "','" + ki + "' )";
 
-            System.out.println(sql);
             stmt.executeUpdate(sql);
 
         } catch (SQLException se) {
@@ -544,8 +543,8 @@ public class Model {
 
             double hours = (now - beidoSec) / 3600.0;
 
-            int fizetendo = (int) (hours * PRICE);
-            fizetendo = calcReduce(fizetendo,pont);
+            int fizetendo = (int) ((1+hours) * PRICE);
+            fizetendo -= calcReduce(fizetendo,pont);
 
             return new KilepesAdatok(nev, azon, cim, szemSzam, beido, status, egyenleg, gepid, pont, new Timestamp(new java.util.Date().getTime()).toString(), fizetendo, hours);
 
@@ -559,7 +558,7 @@ public class Model {
 
     public int calcReduce(int money, int pont){
 
-        double reduce = ((pont/150)*0.01 > 0.015) ? 0.015 : (pont/150)*0.01;
+        double reduce = ((pont/150)*0.01 > 0.1) ? 0.1 : (pont/150)*0.01;
 
         return (int)(money*reduce);
     }
@@ -576,14 +575,9 @@ public class Model {
 
         java.util.Date calcTime = beIdo;
 
-        // TODO rossz a számolás, ezzel talán jó...
-        calcTime = DateUtils.addHours(calcTime, 1);
-
-
         Calendar cal = Calendar.getInstance();
 
-
-        while (calcTime.before(kiIdo)) {
+        while (isOneMoreHour(calcTime,kiIdo)) {
 
             java.util.Date begin = calcTime;
             java.util.Date end = DateUtils.addHours(calcTime, 1);
@@ -593,6 +587,7 @@ public class Model {
 
             cal.setTime(end);
             int hourKI = cal.get(Calendar.HOUR_OF_DAY);
+
 
             if ((hourBE >= 16 && hourBE < 21) || (hourKI >= 16 && hourKI < 21)) {
                 pont++;
@@ -606,6 +601,14 @@ public class Model {
 
 
         return pont;
+    }
+
+    public boolean isOneMoreHour(java.util.Date be, java.util.Date ki){
+
+        java.util.Date calcTime = DateUtils.addHours(be,1);
+
+        return (calcTime.before(ki) || calcTime.equals(ki));
+
     }
 
 
