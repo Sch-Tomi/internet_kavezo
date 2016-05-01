@@ -6,14 +6,15 @@ import IkMen.mysql.helpers.UgyfelArray;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.xml.crypto.Data;
-
 import java.sql.*;
 import java.util.*;
 
 import static org.junit.Assert.*;
 
 /**
+ *
+ * Testing Model class
+ *
  * Created by tom on 2016.04.30..
  */
 public class ModelTest {
@@ -242,16 +243,6 @@ public class ModelTest {
         }catch (DataBaseException e){
             fail(e.getMessage());
         }
-
-
-        //
-        try {
-
-        }catch (DataBaseException e){
-            fail(e.getMessage());
-        }
-
-        //
 
     }
 
