@@ -770,6 +770,8 @@ public class View extends JFrame {
 
     public String UgyfelBe(ArrayList<String> gepids) {
 
+        if (gepids.size()<=0) Notification(1,"Figyelmeztetés","Nincs több szabad gépünk!");
+
         JComboBox<String> combo = new JComboBox<String>();
 
         for (String gep : gepids) {
@@ -785,6 +787,7 @@ public class View extends JFrame {
         JOptionPane.showMessageDialog(null, inside, "Ügyfél beléptetés", JOptionPane.PLAIN_MESSAGE);
 
         return (String) combo.getSelectedItem();
+
     }
 
     public UgyfelArray getCurrentUgyfelData() {
