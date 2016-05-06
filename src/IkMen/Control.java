@@ -137,8 +137,11 @@ public class Control {
 
                     case 5: // "ugyfel_be":
                         String uresgep = gui.UgyfelBe(db.getUresGepekIDs());
-                        db.ugyfelBe(gui.getCurrentUgyfel(), uresgep);
-                        gui.Notification(JOptionPane.INFORMATION_MESSAGE, "Sikeres Művelet", "Az ügyfél sikerült beléptetni!");
+
+                        if(uresgep != null) {
+                            db.ugyfelBe(gui.getCurrentUgyfel(), uresgep);
+                            gui.Notification(JOptionPane.INFORMATION_MESSAGE, "Sikeres Művelet", "Az ügyfél sikerült beléptetni!");
+                        }
                         break;
 
                     case 6: //"ugyfel_ki":

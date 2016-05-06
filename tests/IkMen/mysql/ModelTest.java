@@ -26,7 +26,7 @@ public class ModelTest {
 
         truncate();
 
-        db = new Model(100,"jdbc:mysql://192.168.1.104:3306/ikmenTest","test","qwe");
+        db = new Model(100,"jdbc:mysql://db4free.net/myk5wp_prog_test","myk5wp_prog_test","myk5wp_prog_test");
 
 
 
@@ -45,7 +45,7 @@ public class ModelTest {
         }
 
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://192.168.1.104:3306/ikmenTest","test","qwe");
+            conn = DriverManager.getConnection("jdbc:mysql://db4free.net/myk5wp_prog_test","myk5wp_prog_test","myk5wp_prog_test");
 
         } catch (SQLException e) {
             throw new DataBaseException("[DB - TRUNCATE] Nem sikerült csatlakozni");

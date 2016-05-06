@@ -446,6 +446,7 @@ public class Model {
     }
 
     public void ugyfelBe(String ugyfel, String gepid) throws DataBaseException {
+
         try {
             stmt = conn.createStatement();
             String sql;

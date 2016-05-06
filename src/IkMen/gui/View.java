@@ -770,7 +770,10 @@ public class View extends JFrame {
 
     public String UgyfelBe(ArrayList<String> gepids) {
 
-        if (gepids.size()<=0) Notification(1,"Figyelmeztetés","Nincs több szabad gépünk!");
+        if (gepids.size()<=0){
+            Notification(1,"Figyelmeztetés","Nincs több szabad gépünk!");
+            return null;
+        }
 
         JComboBox<String> combo = new JComboBox<String>();
 

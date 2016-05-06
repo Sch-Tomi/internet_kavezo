@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import org.json.*;
+
 
 /**
  * Internet Kávézó Menedzser - Internet kávézó gépbérlés nyílván tartása
@@ -52,33 +54,36 @@ public class ConfigReader {
     public ConfigReader(String cfgPath) throws ConfigException{
         try {
 
-            String path = cfgPath ;
+            String path = cfgPath;
+            String cfgLine = "";
             List<String> lines = Files.readAllLines(Paths.get(path));
 
-            for(String line : lines){
-                String key = line.split("=")[0].trim();
-                String data = line.split("=")[1].trim();
-
-                switch (key){
-                    case "PRICE":
-                        PRICE = Integer.parseInt(data);
-                        break;
-                    case "DB_URL":
-                        DB_URL = data;
-                        break;
-                    case "DB_USER":
-                        DB_USER = data;
-                        break;
-                    case "DB_PASS":
-                        DB_PASS = data;
-                        break;
-                }
-
+            if (lines.size() == 0) {
+                throw new ConfigException("[CONFIG] Üres fájl!");
             }
 
+            for (String line : lines) {
+                cfgLine += line;
+            }
+
+
+            JSONObject obj = new JSONObject(cfgLine);
+
+            PRICE = obj.getInt("PRICE");
+            DB_URL = obj.getString("DB_URL");
+            DB_USER = obj.getString("DB_USER");
+            DB_PASS = obj.getString("DB_PASS");
+
+
+        }catch (ConfigException cfge){
+            cfge.printStackTrace();
+            throw cfge;
         }catch (IOException ioe){
             ioe.printStackTrace();
             throw new ConfigException("[CONFIG] Nem lehet olvasni a konfig fájlt!");
+        }catch (JSONException jse){
+            jse.printStackTrace();
+            throw new ConfigException("[CONFIG] JSON olvasása nem sikerült!");
         }catch (Exception e){
             e.printStackTrace();
             throw new ConfigException("[CONFIG] Váraltlan hiba");

@@ -1,4 +1,1 @@
-PRICE = 300
-DB_URL = jdbc:mysql://192.168.1.105:3306/ikmen
-DB_USER = test
-DB_PASS = qwe
+{"PRICE":300,"DB_URL":"jdbc:mysql://db4free.net/myk5wp_progtech","DB_USER":"myk5wp_progtech","DB_PASS":"myk5wp_progtech"}
